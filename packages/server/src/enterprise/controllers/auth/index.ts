@@ -92,10 +92,8 @@ const mateSsoHandler = async (req: Request, res: Response, next: NextFunction) =
         // Store user in SSO token cache for sso-success retrieval
         const appServer = getRunningExpressApp()
         const ssoToken = uuidv4()
-        const returnUser = generateSafeCopy({
-            ...loggedInUser,
-            isSSO: true
-        })
+        const returnUser = generateSafeCopy(loggedInUser)
+        returnUser.isSSO = true
         appServer.cachePool.addSSOTokenCache(ssoToken, returnUser)
 
         // Set cookies
