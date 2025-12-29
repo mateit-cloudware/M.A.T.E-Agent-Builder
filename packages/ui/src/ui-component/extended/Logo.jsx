@@ -1,9 +1,11 @@
-import logo from '@/assets/images/flowise_white.svg'
-import logoDark from '@/assets/images/flowise_dark.svg'
+import logo from '@/assets/images/mate_logo.webp'
+
+// M.A.T.E. uses same logo for both themes
+const logoDark = logo
 
 import { useSelector } from 'react-redux'
 
-// ==============================|| LOGO ||============================== //
+// ==============================|| M.A.T.E. LOGO ||============================== //
 
 const Logo = () => {
     const customization = useSelector((state) => state.customization)
@@ -13,7 +15,7 @@ const Logo = () => {
             <img
                 style={{ objectFit: 'contain', height: 'auto', width: 150 }}
                 src={customization.isDarkMode ? logoDark : logo}
-                alt='Flowise'
+                alt='M.A.T.E. Agent Builder'
             />
         </div>
     )

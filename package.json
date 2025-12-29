@@ -1,8 +1,8 @@
 {
-    "name": "flowise",
+    "name": "mate-agent-builder",
     "version": "3.0.12",
     "private": true,
-    "homepage": "https://flowiseai.com",
+    "homepage": "https://getmate.ai",
     "workspaces": [
         "packages/*",
         "flowise",
