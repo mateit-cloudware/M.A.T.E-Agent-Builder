@@ -23,6 +23,7 @@ import { decryptToken, encryptToken, generateSafeCopy } from '../../utils/tempTo
 import { getAuthStrategy } from './AuthStrategy'
 import { initializeDBClientAndStore, initializeRedisClientAndStore } from './SessionPersistance'
 import { v4 as uuidv4 } from 'uuid'
+import { mateAuthMiddleware, isMateRequest } from '../mateAuth'
 
 const localStrategy = require('passport-local').Strategy
 
@@ -402,6 +403,24 @@ const _generateJwtToken = (user: Partial<LoggedInUser>, expiryInMinutes: number,
 }
 
 export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
+    // First, try M.A.T.E. SSO authentication
+    if (isMateRequest(req)) {
+        return mateAuthMiddleware(req, res, (err?: any) => {
+            if (err) return next(err)
+            // If M.A.T.E. SSO set the user, proceed
+            if (req.user) {
+                return next()
+            }
+            // Otherwise, fall through to standard JWT auth
+            return _verifyStandardToken(req, res, next)
+        })
+    }
+    
+    // Standard JWT authentication
+    return _verifyStandardToken(req, res, next)
+}
+
+const _verifyStandardToken = (req: Request, res: Response, next: NextFunction) => {
     passport.authenticate('jwt', { session: true }, (err: any, user: LoggedInUser, info: object) => {
         if (err) {
             return next(err)
