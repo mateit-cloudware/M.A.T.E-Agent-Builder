@@ -1,0 +1,26 @@
+# Railway Configuration für M.A.T.E. Agent Builder (Flowise Fork)
+# https://docs.railway.app/reference/config-as-code
+
+[build]
+builder = "nixpacks"
+
+[build.nixpacksPlan.phases.setup]
+nixPkgs = ["nodejs_20", "pnpm"]
+
+[build.nixpacksPlan.phases.install]
+dependsOn = ["setup"]
+cmds = ["pnpm install"]
+
+[build.nixpacksPlan.phases.build]
+dependsOn = ["install"]
+cmds = ["pnpm build"]
+
+[deploy]
+startCommand = "pnpm start"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
+
+[deploy.healthcheck]
+path = "/"
+timeout = 120
+interval = 30
