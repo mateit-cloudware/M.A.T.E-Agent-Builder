@@ -54,7 +54,11 @@ export const WHITELIST_URLS = [
     Auth0SSO.CALLBACK_URI,
     GithubSSO.LOGIN_URI,
     GithubSSO.LOGOUT_URI,
-    GithubSSO.CALLBACK_URI
+    GithubSSO.CALLBACK_URI,
+    // M.A.T.E. SSO Integration
+    '/api/v1/auth/mate-sso',
+    '/api/v1/auth/mate-sso/validate',
+    '/api/v1/auth/sso-success'
 ]
 
 export const enum GeneralErrorMessage {
