@@ -9,14 +9,23 @@ nixPkgs = ["nodejs_20", "pnpm"]
 
 [build.nixpacksPlan.phases.install]
 dependsOn = ["setup"]
-cmds = ["pnpm install"]
+cmds = ["pnpm install --prod=false"]
 
 [build.nixpacksPlan.phases.build]
 dependsOn = ["install"]
 cmds = ["pnpm build"]
 
+[build.nixpacksPlan.phases.cleanup]
+dependsOn = ["build"]
+cmds = [
+    "pnpm prune --prod",
+    "rm -rf /root/.cache /root/.npm /tmp/*",
+    "find . -name '*.map' -delete",
+    "find . -name '*.ts' -not -name '*.d.ts' -delete"
+]
+
 [deploy]
-startCommand = "pnpm start"
+startCommand = "cd packages/server && pnpm start"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
 
