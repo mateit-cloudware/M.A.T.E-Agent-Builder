@@ -25,7 +25,7 @@ cmds = [
 ]
 
 [deploy]
-startCommand = "cd packages/server && pnpm start"
+startCommand = "pnpm start"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
 
