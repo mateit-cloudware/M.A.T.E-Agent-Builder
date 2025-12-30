@@ -237,26 +237,30 @@ const getOrCreateMateUser = async (payload: MateTokenPayload): Promise<LoggedInU
                         logger.info(`[M.A.T.E. SSO] Created user: ${user!.id}`)
                     } else {
                         // No existing user - this is a fresh database bootstrap
-                        // Use raw query to bypass FK constraint for first user
+                        // Use raw query with deferred FK constraint for self-referencing first user
                         const newUserId = uuidv4()
+                        await queryRunner.query(`SET CONSTRAINTS ALL DEFERRED`)
                         await queryRunner.query(
                             `INSERT INTO "user" (id, email, name, status, "createdBy", "updatedBy", "createdDate", "updatedDate") 
                              VALUES ($1, $2, $3, $4, $1, $1, NOW(), NOW())`,
                             [newUserId, payload.email, payload.name || payload.email.split('@')[0], UserStatus.ACTIVE]
                         )
+                        await queryRunner.query(`SET CONSTRAINTS ALL IMMEDIATE`)
                         user = await queryRunner.manager.findOne(User, { where: { id: newUserId } })
                         logger.info(`[M.A.T.E. SSO] Bootstrap: Created first user with self-reference: ${user!.id}`)
                     }
                 } else {
                     // No organization exists - bootstrap scenario
                     if (!creatorId) {
-                        // Use raw query to bypass FK constraint for first user
+                        // Use raw query with deferred FK constraint for self-referencing first user
                         const newUserId = uuidv4()
+                        await queryRunner.query(`SET CONSTRAINTS ALL DEFERRED`)
                         await queryRunner.query(
                             `INSERT INTO "user" (id, email, name, status, "createdBy", "updatedBy", "createdDate", "updatedDate") 
                              VALUES ($1, $2, $3, $4, $1, $1, NOW(), NOW())`,
                             [newUserId, payload.email, payload.name || payload.email.split('@')[0], UserStatus.ACTIVE]
                         )
+                        await queryRunner.query(`SET CONSTRAINTS ALL IMMEDIATE`)
                         user = await queryRunner.manager.findOne(User, { where: { id: newUserId } })
                         creatorId = user!.id
                         logger.info(`[M.A.T.E. SSO] Bootstrap: Created first user with self-reference: ${user!.id}`)
