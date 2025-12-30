@@ -7,24 +7,24 @@ const swaggerUiOptions = {
     definition: {
         openapi: '3.0.3',
         info: {
-            title: 'Flowise APIs',
-            summary: 'Interactive swagger-ui auto-generated API docs from express, based on a swagger.yml file',
+            title: 'M.A.T.E. Agent Builder APIs',
+            summary: 'Interactive swagger-ui auto-generated API docs for M.A.T.E. Agent Builder',
             version: '1.0.0',
             description:
-                'This module serves auto-generated swagger-ui generated API docs from Flowise express backend, based on a swagger.yml file. Swagger is available on: http://localhost:6655/api-docs',
+                'This module serves auto-generated swagger-ui generated API docs from M.A.T.E. Agent Builder backend, based on a swagger.yml file. Swagger is available on: http://localhost:6655/api-docs',
             license: {
                 name: 'Apache 2.0',
-                url: 'https://github.com/FlowiseAI/Flowise/blob/main/LICENSE.md'
+                url: 'https://github.com/mateit-cloudware/M.A.T.E-Agent-Builder/blob/main/LICENSE.md'
             },
             contact: {
-                name: 'FlowiseAI',
-                email: 'support@flowiseai.com'
+                name: 'M.A.T.E. by Mate iT GmbH',
+                email: 'support@mateit.de'
             }
         },
         servers: [
             {
                 url: 'http://localhost:3000/api/v1',
-                description: 'Flowise Server'
+                description: 'M.A.T.E. Agent Builder Server'
             }
         ]
     },
