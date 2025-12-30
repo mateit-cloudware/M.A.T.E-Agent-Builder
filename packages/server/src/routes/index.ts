@@ -69,6 +69,7 @@ import accountRouter from '../enterprise/routes/account.route'
 import loginMethodRouter from '../enterprise/routes/login-method.route'
 import walletRouter from '../enterprise/routes/wallet.route'
 import adminRouter from '../enterprise/routes/admin.route'
+import agentGeneratorRouter from '../enterprise/routes/agent-generator.route'
 import { IdentityManager } from '../IdentityManager'
 
 const router = express.Router()
@@ -141,6 +142,7 @@ router.use('/account', accountRouter)
 router.use('/loginmethod', loginMethodRouter)
 router.use('/wallet', walletRouter)
 router.use('/admin', adminRouter)
+router.use('/agent-generator', agentGeneratorRouter)
 router.use('/logs', IdentityManager.checkFeatureByPlan('feat:logs'), logsRouter)
 router.use('/files', IdentityManager.checkFeatureByPlan('feat:files'), filesRouter)
 

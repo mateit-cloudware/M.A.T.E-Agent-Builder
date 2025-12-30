@@ -25,7 +25,8 @@ import {
     IconShieldLock,
     IconListCheck,
     IconWallet,
-    IconDashboard
+    IconDashboard,
+    IconWand
 } from '@tabler/icons-react'
 
 // constant
@@ -55,7 +56,8 @@ const icons = {
     IconShieldLock,
     IconListCheck,
     IconWallet,
-    IconDashboard
+    IconDashboard,
+    IconWand
 }
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
@@ -70,6 +72,19 @@ const dashboard = {
             title: '',
             type: 'group',
             children: [
+                {
+                    id: 'wizard',
+                    title: 'Agent erstellen',
+                    type: 'item',
+                    url: '/wizard',
+                    icon: icons.IconWand,
+                    breadcrumbs: true,
+                    chip: {
+                        label: 'NEU',
+                        color: 'primary',
+                        size: 'small'
+                    }
+                },
                 {
                     id: 'chatflows',
                     title: 'Chatflows',
