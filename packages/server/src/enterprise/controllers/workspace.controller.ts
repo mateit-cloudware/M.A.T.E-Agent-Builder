@@ -119,13 +119,21 @@ export class WorkspaceController {
                 } as IAssignedWorkspace
             })
 
+            // M.A.T.E.: Check if user is organization admin
+            // Multiple fallback checks for robustness
+            const isOrgAdmin = (
+                (ownerRole && workspaceUser.roleId === ownerRole.id) ||
+                (role.name && role.name.toLowerCase() === 'owner') ||
+                assignedWorkspaces.some(ws => ws.role && ws.role.toLowerCase() === 'owner')
+            )
+
             const loggedInUser: LoggedInUser & { role: string; isSSO: boolean } = {
                 ...req.user,
                 activeOrganizationId: org.id,
                 activeOrganizationSubscriptionId: subscriptionId,
                 activeOrganizationCustomerId: customerId,
                 activeOrganizationProductId: productId,
-                isOrganizationAdmin: workspaceUser.roleId === ownerRole.id,
+                isOrganizationAdmin: isOrgAdmin,  // M.A.T.E.: Use robust admin check
                 activeWorkspaceId: workspace.id,
                 activeWorkspace: workspace.name,
                 assignedWorkspaces,

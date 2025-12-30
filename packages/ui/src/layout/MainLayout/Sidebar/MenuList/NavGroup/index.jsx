@@ -89,9 +89,17 @@ const NavGroup = ({ item }) => {
             </List>
 
             {renderNonPrimaryGroups().map((group) => {
-                const groupPermissions = group.children.map((menu) => menu.permission).join(',')
+                // M.A.T.E.: Filter out undefined permissions and join valid ones
+                const groupPermissions = group.children
+                    .map((menu) => menu.permission)
+                    .filter((perm) => perm && typeof perm === 'string')
+                    .join(',')
+                
+                // If no valid permissions, still render the group (items without permission are always visible)
+                const permissionToCheck = groupPermissions || undefined
+                
                 return (
-                    <Available key={group.id} permission={groupPermissions}>
+                    <Available key={group.id} permission={permissionToCheck}>
                         <>
                             <Divider sx={{ height: '1px', borderColor: theme.palette.grey[900] + 25, my: 0 }} />
                             <List

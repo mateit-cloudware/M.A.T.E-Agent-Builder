@@ -112,6 +112,14 @@ abstract class SSOBase {
                 } as IAssignedWorkspace
             })
 
+            // M.A.T.E.: Check if user is organization admin
+            // Multiple fallback checks for robustness
+            const isOrgAdmin = (
+                (ownerRole && workspaceUser.roleId === ownerRole.id) ||
+                (role.name && role.name.toLowerCase() === 'owner') ||
+                assignedWorkspaces.some(ws => ws.role && ws.role.toLowerCase() === 'owner')
+            )
+
             const organization = await organizationService.readOrganizationById(workspaceUser.workspace.organizationId, queryRunner)
             if (!organization) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, 'Organization not found')
             const subscriptionId = organization.subscriptionId as string
@@ -128,7 +136,7 @@ abstract class SSOBase {
                 activeOrganizationSubscriptionId: subscriptionId,
                 activeOrganizationCustomerId: customerId,
                 activeOrganizationProductId: productId,
-                isOrganizationAdmin: workspaceUser.roleId === ownerRole?.id,
+                isOrganizationAdmin: isOrgAdmin,  // M.A.T.E.: Use robust admin check
                 activeWorkspaceId: workspaceUser.workspaceId,
                 activeWorkspace: workspaceUser.workspace.name,
                 assignedWorkspaces,

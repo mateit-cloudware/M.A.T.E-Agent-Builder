@@ -157,6 +157,17 @@ export const initializeJwtCookieMiddleware = async (app: express.Application, id
                     const role = await roleService.readRoleById(workspaceUser.roleId, queryRunner)
                     if (!role) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
 
+                    // M.A.T.E.: Check if user is organization admin
+                    // Multiple fallback checks for robustness:
+                    // 1. User's roleId matches the owner role ID
+                    // 2. User's role name is 'owner' (case-insensitive)
+                    // 3. User has owner role in any assigned workspace
+                    const isOrgAdmin = (
+                        (ownerRole && workspaceUser.roleId === ownerRole.id) ||
+                        (role.name && role.name.toLowerCase() === 'owner') ||
+                        assignedWorkspaces.some(ws => ws.role && ws.role.toLowerCase() === 'owner')
+                    )
+
                     const orgService = new OrganizationService()
                     const organization = await orgService.readOrganizationById(organizationUser.organizationId, queryRunner)
                     if (!organization) {
@@ -176,7 +187,7 @@ export const initializeJwtCookieMiddleware = async (app: express.Application, id
                         activeOrganizationSubscriptionId: subscriptionId,
                         activeOrganizationCustomerId: customerId,
                         activeOrganizationProductId: productId,
-                        isOrganizationAdmin: workspaceUser.roleId === ownerRole.id,
+                        isOrganizationAdmin: isOrgAdmin,  // M.A.T.E.: Use robust admin check
                         activeWorkspaceId: workspaceUser.workspaceId,
                         activeWorkspace: workspaceUser.workspace.name,
                         assignedWorkspaces,

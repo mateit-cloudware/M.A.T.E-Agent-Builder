@@ -9,21 +9,37 @@ export const useAuth = () => {
     const currentUser = useSelector((state) => state.auth.user)
 
     // M.A.T.E.: Check if user is effectively an admin
-    // This includes:
-    // 1. isGlobal flag (set from isOrganizationAdmin)
-    // 2. User has 'owner' role in their assigned workspaces (backup check)
-    // 3. User has isOrganizationAdmin property set to true
+    // Multiple fallback checks for robustness:
+    // 1. isGlobal flag from Redux (set from isOrganizationAdmin on login)
+    // 2. isOrganizationAdmin property on user object (direct check)
+    // 3. User has 'owner' role in any assigned workspace (case-insensitive)
+    // 4. User role name is 'owner' (case-insensitive backup)
     const isEffectiveAdmin = () => {
-        if (isGlobal) return true
-        if (currentUser?.isOrganizationAdmin) return true
-        // Check if user has owner role in any workspace
-        if (currentUser?.assignedWorkspaces) {
-            return currentUser.assignedWorkspaces.some(ws => ws.role === 'owner')
+        // Check 1: Redux isGlobal flag
+        if (isGlobal === true || isGlobal === 'true') return true
+        
+        // Check 2: User property isOrganizationAdmin
+        if (currentUser?.isOrganizationAdmin === true || currentUser?.isOrganizationAdmin === 'true') return true
+        
+        // Check 3: User has owner role in assignedWorkspaces (case-insensitive)
+        if (currentUser?.assignedWorkspaces && Array.isArray(currentUser.assignedWorkspaces)) {
+            const hasOwnerRole = currentUser.assignedWorkspaces.some(ws => {
+                if (!ws?.role) return false
+                return ws.role.toLowerCase() === 'owner'
+            })
+            if (hasOwnerRole) return true
         }
+        
+        // Check 4: User's current role is owner (case-insensitive)
+        if (currentUser?.role && typeof currentUser.role === 'string') {
+            if (currentUser.role.toLowerCase() === 'owner') return true
+        }
+        
         return false
     }
 
     const hasPermission = (permissionId) => {
+        // M.A.T.E.: Effective admins bypass all permission checks
         if (isOpenSource || isEffectiveAdmin()) {
             return true
         }
