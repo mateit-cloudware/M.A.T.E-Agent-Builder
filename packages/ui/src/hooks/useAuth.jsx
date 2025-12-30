@@ -36,6 +36,12 @@ export const useAuth = () => {
             return true
         }
 
+        // M.A.T.E.: Global admins (Organization Owners) should see all features
+        // This is consistent with hasPermission() behavior
+        if (isGlobal) {
+            return true
+        }
+
         // if it has display flag, but user has no features, then it should not be displayed
         if (!features || Array.isArray(features) || Object.keys(features).length === 0) {
             return false
