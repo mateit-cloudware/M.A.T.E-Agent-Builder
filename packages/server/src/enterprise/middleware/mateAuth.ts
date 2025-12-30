@@ -12,7 +12,7 @@
 
 import express, { NextFunction, Request, Response } from 'express'
 import jwt, { sign } from 'jsonwebtoken'
-import { v4 as uuidv4, v5 as uuidv5 } from 'uuid'
+import { v4 as uuidv4 } from 'uuid'
 import { LoggedInUser, IAssignedWorkspace } from '../Interface.Enterprise'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { OrganizationService } from '../services/organization.service'
@@ -34,30 +34,6 @@ const MATE_JWT_SECRET = process.env.MATE_JWT_SECRET || process.env.JWT_SECRET ||
 
 // Enable/disable M.A.T.E. SSO
 const MATE_SSO_ENABLED = process.env.MATE_SSO_ENABLED !== 'false'
-
-// UUID namespace for deterministic UUID generation from non-UUID strings
-const MATE_UUID_NAMESPACE = '6ba7b810-9dad-11d1-80b4-00c04fd430c8' // DNS namespace UUID
-
-/**
- * Check if a string is a valid UUID
- */
-const isValidUUID = (str: string): boolean => {
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-    return uuidRegex.test(str)
-}
-
-/**
- * Convert any string to a valid UUID
- * If the string is already a valid UUID, return it as-is
- * Otherwise, generate a deterministic UUID v5 from the string
- */
-const toValidUUID = (str: string): string => {
-    if (isValidUUID(str)) {
-        return str
-    }
-    // Generate a deterministic UUID v5 from the string
-    return uuidv5(str, MATE_UUID_NAMESPACE)
-}
 
 interface MateTokenPayload {
     user_id: string
@@ -233,8 +209,8 @@ const getOrCreateMateUser = async (payload: MateTokenPayload): Promise<LoggedInU
             await queryRunner.startTransaction()
             
             try {
-                // Use M.A.T.E. user_id as createdBy - convert to valid UUID if necessary
-                const mateUserId = toValidUUID(payload.user_id)
+                // Generate a new UUID for this user - will be used as self-reference for createdBy
+                const newUserId = uuidv4()
                 
                 // Check for existing organizations
                 const organizations = await orgService.readOrganization(queryRunner)
@@ -243,17 +219,17 @@ const getOrCreateMateUser = async (payload: MateTokenPayload): Promise<LoggedInU
                     // Use existing organization
                     organization = organizations[0]
                 } else {
-                    // Create new organization - will use user.id after user creation
-                    // First, create user to get valid UUID
+                    // Create new organization - first need to create user with self-reference
                     const newUser = queryRunner.manager.create(User, {
+                        id: newUserId,
                         email: payload.email,
                         name: payload.name || payload.email.split('@')[0],
                         status: UserStatus.ACTIVE,
-                        createdBy: mateUserId,  // Use M.A.T.E. user_id as UUID
-                        updatedBy: mateUserId
+                        createdBy: newUserId,  // Self-reference: user creates itself
+                        updatedBy: newUserId
                     })
                     user = await queryRunner.manager.save(User, newUser)
-                    logger.info(`[M.A.T.E. SSO] Created user: ${user!.id}`)
+                    logger.info(`[M.A.T.E. SSO] Created user with self-reference: ${user!.id}`)
                     
                     // Now create organization with user's ID
                     const newOrg = queryRunner.manager.create(Organization, {
@@ -265,14 +241,15 @@ const getOrCreateMateUser = async (payload: MateTokenPayload): Promise<LoggedInU
                     logger.info(`[M.A.T.E. SSO] Created organization: ${organization!.id}`)
                 }
 
-                // Create user if not already created
+                // Create user if not already created (when org already exists)
                 if (!user) {
                     const newUser = queryRunner.manager.create(User, {
+                        id: newUserId,
                         email: payload.email,
                         name: payload.name || payload.email.split('@')[0],
                         status: UserStatus.ACTIVE,
-                        createdBy: mateUserId,  // Use M.A.T.E. user_id as UUID
-                        updatedBy: mateUserId
+                        createdBy: newUserId,  // Self-reference: user creates itself
+                        updatedBy: newUserId
                     })
                     user = await queryRunner.manager.save(User, newUser)
                     logger.info(`[M.A.T.E. SSO] Created user: ${user!.id}`)
