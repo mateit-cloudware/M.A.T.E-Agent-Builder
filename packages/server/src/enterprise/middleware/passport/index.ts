@@ -174,7 +174,6 @@ export const initializeJwtCookieMiddleware = async (app: express.Application, id
                     // Check 4: First user in organization bootstrap
                     // If user is not yet admin by role, check if they're the only/first user
                     if (!isOrgAdmin) {
-                        const orgUserService = new OrganizationUserService()
                         const allOrgUsers = await queryRunner.manager
                             .createQueryBuilder('OrganizationUser', 'ou')
                             .where('ou.organizationId = :orgId', { orgId: organizationUser.organizationId })
