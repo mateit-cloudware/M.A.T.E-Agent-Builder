@@ -9,7 +9,8 @@ export enum WalletTransactionType {
     AUTO_TOPUP = 'AUTO_TOPUP', // Automatic top-up
     USAGE = 'USAGE',           // Usage deduction (Voice/LLM)
     REFUND = 'REFUND',         // Refund
-    ADJUSTMENT = 'ADJUSTMENT'  // Admin manual adjustment
+    ADJUSTMENT = 'ADJUSTMENT', // Admin manual adjustment
+    SIGNUP_BONUS = 'SIGNUP_BONUS' // Free credits for new users
 }
 
 /**

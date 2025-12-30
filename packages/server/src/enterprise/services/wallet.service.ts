@@ -27,6 +27,9 @@ export const PricingConfig = {
     // Default auto-topup settings
     DEFAULT_AUTO_TOPUP_THRESHOLD_CENTS: 500,  // €5.00
     DEFAULT_AUTO_TOPUP_AMOUNT_CENTS: 2500,    // €25.00
+    
+    // Initial free credits for new users: €10 = 1000 cents (100 Credits)
+    INITIAL_FREE_CREDITS_CENTS: 1000,
 }
 
 export const enum WalletErrorMessage {
@@ -131,6 +134,7 @@ export class WalletService {
     /**
      * Create a new wallet for a user
      * Called automatically when a user is created
+     * Includes initial free credits (€10) as signup bonus
      */
     public async createWallet(userId: string): Promise<Wallet> {
         const queryRunner = this.dataSource.createQueryRunner()
@@ -151,17 +155,33 @@ export class WalletService {
 
             await queryRunner.startTransaction()
 
+            // Create wallet with initial free credits
+            const initialBalance = PricingConfig.INITIAL_FREE_CREDITS_CENTS
             const wallet = queryRunner.manager.create(Wallet, {
                 id: generateId(),
                 userId,
-                balanceCents: 0,
+                balanceCents: initialBalance,
                 autoTopupEnabled: false,
                 autoTopupThresholdCents: PricingConfig.DEFAULT_AUTO_TOPUP_THRESHOLD_CENTS,
                 autoTopupAmountCents: PricingConfig.DEFAULT_AUTO_TOPUP_AMOUNT_CENTS
             })
 
             await queryRunner.manager.save(Wallet, wallet)
+
+            // Create signup bonus transaction record
+            const transaction = queryRunner.manager.create(WalletTransaction, {
+                id: generateId(),
+                walletId: wallet.id,
+                type: WalletTransactionType.SIGNUP_BONUS,
+                amountCents: initialBalance,
+                balanceAfterCents: initialBalance,
+                description: `Signup bonus: €${(initialBalance / 100).toFixed(2)} free credits`
+            })
+
+            await queryRunner.manager.save(WalletTransaction, transaction)
             await queryRunner.commitTransaction()
+
+            logger.info(`Created wallet for user ${userId} with €${(initialBalance / 100).toFixed(2)} signup bonus`)
 
             return wallet
         } catch (error) {

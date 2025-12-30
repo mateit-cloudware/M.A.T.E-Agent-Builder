@@ -309,7 +309,7 @@ const MainRoutes = {
         {
             path: '/users',
             element: (
-                <RequireAuth permission={'users:manage'} display={'feat:users'}>
+                <RequireAuth permission={'users:manage'}>
                     <UsersPage />
                 </RequireAuth>
             )
@@ -317,7 +317,7 @@ const MainRoutes = {
         {
             path: '/roles',
             element: (
-                <RequireAuth permission={'roles:manage'} display={'feat:roles'}>
+                <RequireAuth permission={'roles:manage'}>
                     <RolesPage />
                 </RequireAuth>
             )
@@ -325,7 +325,7 @@ const MainRoutes = {
         {
             path: '/login-activity',
             element: (
-                <RequireAuth permission={'loginActivity:view'} display={'feat:login-activity'}>
+                <RequireAuth permission={'loginActivity:view'}>
                     <LoginActivityPage />
                 </RequireAuth>
             )
@@ -333,7 +333,7 @@ const MainRoutes = {
         {
             path: '/workspaces',
             element: (
-                <RequireAuth permission={'workspace:view'} display={'feat:workspaces'}>
+                <RequireAuth permission={'workspace:view'}>
                     <Workspaces />
                 </RequireAuth>
             )
@@ -341,7 +341,7 @@ const MainRoutes = {
         {
             path: '/workspace-users/:id',
             element: (
-                <RequireAuth permission={'workspace:view'} display={'feat:workspaces'}>
+                <RequireAuth permission={'workspace:view'}>
                     <WorkspaceDetails />
                 </RequireAuth>
             )
@@ -349,7 +349,7 @@ const MainRoutes = {
         {
             path: '/sso-config',
             element: (
-                <RequireAuth permission={'sso:manage'} display={'feat:sso-config'}>
+                <RequireAuth permission={'sso:manage'}>
                     <SSOConfig />
                 </RequireAuth>
             )
@@ -361,7 +361,7 @@ const MainRoutes = {
         {
             path: '/admin',
             element: (
-                <RequireAuth permission={'users:manage'} display={'feat:users'}>
+                <RequireAuth permission={'users:manage'}>
                     <AdminDashboard />
                 </RequireAuth>
             )

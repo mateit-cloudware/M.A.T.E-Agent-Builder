@@ -211,7 +211,7 @@ const dashboard = {
                     url: '/sso-config',
                     icon: icons.IconShieldLock,
                     breadcrumbs: true,
-                    display: 'feat:sso-config',
+                    // display removed - only permission check
                     permission: 'sso:manage'
                 },
                 {
@@ -221,7 +221,7 @@ const dashboard = {
                     url: '/roles',
                     icon: icons.IconLockCheck,
                     breadcrumbs: true,
-                    display: 'feat:roles',
+                    // display removed - only permission check
                     permission: 'roles:manage'
                 },
                 {
@@ -231,7 +231,7 @@ const dashboard = {
                     url: '/users',
                     icon: icons.IconUsers,
                     breadcrumbs: true,
-                    display: 'feat:users',
+                    // display removed - only permission check
                     permission: 'users:manage'
                 },
                 {
@@ -241,7 +241,7 @@ const dashboard = {
                     url: '/workspaces',
                     icon: icons.IconStack2,
                     breadcrumbs: true,
-                    display: 'feat:workspaces',
+                    // display removed - only permission check
                     permission: 'workspace:view'
                 },
                 {
@@ -251,7 +251,7 @@ const dashboard = {
                     url: '/login-activity',
                     icon: icons.IconClipboardList,
                     breadcrumbs: true,
-                    display: 'feat:login-activity',
+                    // display removed - only permission check
                     permission: 'loginActivity:view'
                 },
                 {
@@ -261,7 +261,7 @@ const dashboard = {
                     url: '/admin',
                     icon: icons.IconDashboard,
                     breadcrumbs: true,
-                    display: 'feat:users',
+                    // display removed - only permission check
                     permission: 'users:manage'
                 }
             ]
@@ -278,7 +278,7 @@ const dashboard = {
                     url: '/logs',
                     icon: icons.IconList,
                     breadcrumbs: true,
-                    display: 'feat:logs',
+                    // display removed - only permission check
                     permission: 'logs:view'
                 },
                 {
@@ -304,8 +304,8 @@ const dashboard = {
                     type: 'item',
                     url: '/account',
                     icon: icons.IconSettings,
-                    breadcrumbs: true,
-                    display: 'feat:account'
+                    breadcrumbs: true
+                    // display removed - visible to all
                 }
             ]
         }
