@@ -358,7 +358,7 @@ class HaystackPipeline_MATEVoice implements INode {
         }
 
         // For retrieval-only queries, concatenate document contents
-        if (queryType === 'retrieval' && !answer && documents.length > 0) {
+        if (queryType === 'retrieval' && !answer && documents && documents.length > 0) {
             answer = documents.map(d => d.content).join('\n\n')
         }
 

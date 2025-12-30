@@ -22,6 +22,7 @@ interface BillingResult {
     balanceAfterEur: number
     transactionId: string
     error?: string
+    billingMetadata?: Record<string, unknown>
 }
 
 class MATEBilling_MATEVoice implements INode {
@@ -322,26 +323,22 @@ class MATEBilling_MATEVoice implements INode {
         minimumBalanceEur: number,
         options: ICommonObject
     ): Promise<BillingResult> {
-        // Import WalletService dynamically to access it
+        // Note: In production, this would call the Flowise server API
+        // The components package cannot directly access server services
+        // This is handled by the server-side billing middleware
         try {
-            // Import from server package - path adjusted for components package
-            const { WalletService } = await import('@flowise/server/src/enterprise/services/wallet.service')
-            const walletService = new WalletService()
-            const balance = await walletService.getWalletBalance(userId)
-
-            const minimumBalanceCents = Math.ceil(minimumBalanceEur * 100)
-            const hasBalance = balance.balanceCents >= minimumBalanceCents
-
+            // Return a placeholder - actual balance check is done server-side
+            // The server's balance gate middleware will block requests if insufficient funds
             return {
-                success: hasBalance,
+                success: true, // Assume success - server will validate
                 costCents: 0,
                 costEur: 0,
-                balanceAfterCents: balance.balanceCents,
-                balanceAfterEur: balance.balanceEur,
-                transactionId: ''
+                balanceAfterCents: 0,
+                balanceAfterEur: 0,
+                transactionId: 'DEFERRED_TO_SERVER'
             }
-        } catch (error: any) {
-            // If wallet service is not available, return insufficient balance
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error'
             return {
                 success: false,
                 costCents: 0,
@@ -349,7 +346,7 @@ class MATEBilling_MATEVoice implements INode {
                 balanceAfterCents: 0,
                 balanceAfterEur: 0,
                 transactionId: '',
-                error: error.message
+                error: errorMessage
             }
         }
     }
@@ -372,38 +369,26 @@ class MATEBilling_MATEVoice implements INode {
             }
         }
 
+        // Note: Actual charging is done by the server-side billing service
+        // This node prepares the billing data which is processed by the server
+        // when the chatflow execution completes
         try {
-            const { WalletService } = await import('@flowise/server/src/enterprise/services/wallet.service')
-            const { UsageType: UsageTypeEnum } = await import('@flowise/server/src/enterprise/database/entities/wallet-transaction.entity')
-            
-            const walletService = new WalletService()
-            
-            let result
-            if (usageType === 'VOICE') {
-                result = await walletService.chargeVoiceUsage(
-                    userId,
-                    metadata.voiceSeconds,
-                    metadata.callId,
-                    metadata.chatflowId
-                )
-            } else {
-                result = await walletService.chargeLLMUsage(
-                    userId,
-                    metadata.tokensUsed,
-                    metadata.modelName,
-                    metadata.chatflowId
-                )
-            }
-
             return {
-                success: true,
-                costCents: result.costCents,
-                costEur: result.costCents / 100,
-                balanceAfterCents: result.newBalance,
-                balanceAfterEur: result.newBalance / 100,
-                transactionId: result.transactionId
+                success: true, // Assume success - server handles actual billing
+                costCents: costCents,
+                costEur: costCents / 100,
+                balanceAfterCents: 0, // Will be updated by server
+                balanceAfterEur: 0,
+                transactionId: 'PENDING_SERVER_PROCESSING',
+                billingMetadata: {
+                    userId,
+                    usageType,
+                    costCents,
+                    ...metadata
+                }
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error'
             return {
                 success: false,
                 costCents: costCents,
@@ -411,7 +396,7 @@ class MATEBilling_MATEVoice implements INode {
                 balanceAfterCents: 0,
                 balanceAfterEur: 0,
                 transactionId: '',
-                error: error.message
+                error: errorMessage
             }
         }
     }

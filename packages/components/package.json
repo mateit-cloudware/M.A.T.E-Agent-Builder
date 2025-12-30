@@ -173,6 +173,7 @@
         "@types/gulp": "4.0.9",
         "@types/jest": "^29.5.14",
         "@types/lodash": "^4.17.20",
+        "@types/node": "^20.0.0",
         "@types/node-fetch": "2.6.2",
         "@types/object-hash": "^3.0.2",
         "@types/papaparse": "^5.3.15",
