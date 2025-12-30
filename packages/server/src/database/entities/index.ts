@@ -26,6 +26,8 @@ import { Workspace } from '../../enterprise/database/entities/workspace.entity'
 import { WorkspaceUser } from '../../enterprise/database/entities/workspace-user.entity'
 import { LoginMethod } from '../../enterprise/database/entities/login-method.entity'
 import { LoginSession } from '../../enterprise/database/entities/login-session.entity'
+import { Wallet } from '../../enterprise/database/entities/wallet.entity'
+import { WalletTransaction } from '../../enterprise/database/entities/wallet-transaction.entity'
 
 export const entities = {
     ChatFlow,
@@ -57,5 +59,7 @@ export const entities = {
     Workspace,
     WorkspaceUser,
     LoginMethod,
-    LoginSession
+    LoginSession,
+    Wallet,
+    WalletTransaction
 }

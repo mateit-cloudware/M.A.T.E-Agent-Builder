@@ -67,6 +67,7 @@ import workspaceRouter from '../enterprise/routes/workspace.route'
 import workspaceUserRouter from '../enterprise/routes/workspace-user.route'
 import accountRouter from '../enterprise/routes/account.route'
 import loginMethodRouter from '../enterprise/routes/login-method.route'
+import walletRouter from '../enterprise/routes/wallet.route'
 import { IdentityManager } from '../IdentityManager'
 
 const router = express.Router()
@@ -137,6 +138,7 @@ router.use('/workspace', workspaceRouter)
 router.use('/workspaceuser', workspaceUserRouter)
 router.use('/account', accountRouter)
 router.use('/loginmethod', loginMethodRouter)
+router.use('/wallet', walletRouter)
 router.use('/logs', IdentityManager.checkFeatureByPlan('feat:logs'), logsRouter)
 router.use('/files', IdentityManager.checkFeatureByPlan('feat:files'), filesRouter)
 

@@ -23,7 +23,8 @@ import {
     IconLockCheck,
     IconFileDatabase,
     IconShieldLock,
-    IconListCheck
+    IconListCheck,
+    IconWallet
 } from '@tabler/icons-react'
 
 // constant
@@ -51,7 +52,8 @@ const icons = {
     IconLockCheck,
     IconFileDatabase,
     IconShieldLock,
-    IconListCheck
+    IconListCheck,
+    IconWallet
 }
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
@@ -266,6 +268,14 @@ const dashboard = {
                     breadcrumbs: true,
                     display: 'feat:logs',
                     permission: 'logs:view'
+                },
+                {
+                    id: 'wallet',
+                    title: 'Wallet & Billing',
+                    type: 'item',
+                    url: '/wallet',
+                    icon: icons.IconWallet,
+                    breadcrumbs: true
                 },
                 // {
                 //     id: 'files',

@@ -52,6 +52,7 @@ import { AddSSOColumns1730519457880 } from '../../../enterprise/database/migrati
 import { AddPersonalWorkspace1734074497540 } from '../../../enterprise/database/migrations/postgres/1734074497540-AddPersonalWorkspace'
 import { RefactorEnterpriseDatabase1737076223692 } from '../../../enterprise/database/migrations/postgres/1737076223692-RefactorEnterpriseDatabase'
 import { ExecutionLinkWorkspaceId1746862866554 } from '../../../enterprise/database/migrations/postgres/1746862866554-ExecutionLinkWorkspaceId'
+import { AddWalletTables1735588800000 } from '../../../enterprise/database/migrations/postgres/1735588800000-AddWalletTables'
 
 export const postgresMigrations = [
     Init1693891895163,
@@ -106,5 +107,6 @@ export const postgresMigrations = [
     AddTextToSpeechToChatFlow1754986480347,
     ModifyChatflowType1755066758601,
     AddTextToSpeechToChatFlow1759419194331,
-    AddChatFlowNameIndex1759424903973
+    AddChatFlowNameIndex1759424903973,
+    AddWalletTables1735588800000
 ]

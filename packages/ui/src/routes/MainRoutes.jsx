@@ -52,6 +52,9 @@ const Evaluators = Loadable(lazy(() => import('@/views/evaluators')))
 // account routing
 const Account = Loadable(lazy(() => import('@/views/account')))
 
+// wallet routing
+const Wallet = Loadable(lazy(() => import('@/views/wallet')))
+
 // files routing
 const Files = Loadable(lazy(() => import('@/views/files')))
 
@@ -93,6 +96,14 @@ const MainRoutes = {
             element: (
                 <RequireAuth permission={'agentflows:view'}>
                     <Agentflows />
+                </RequireAuth>
+            )
+        },
+        {
+            path: '/wallet',
+            element: (
+                <RequireAuth>
+                    <Wallet />
                 </RequireAuth>
             )
         },
