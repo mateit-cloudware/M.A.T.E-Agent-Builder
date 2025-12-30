@@ -34,10 +34,10 @@ export const ConfigProvider = ({ children }) => {
                         setCloudLicensed(false)
                     }
                 } else {
-                    // M.A.T.E.: Default to open source when PLATFORM_TYPE is missing
-                    // This ensures the UI works even without proper backend configuration
-                    setOpenSource(true)
-                    setEnterpriseLicensed(false)
+                    // M.A.T.E.: Default to Enterprise when PLATFORM_TYPE is missing
+                    // This ensures the full Enterprise UI is available by default
+                    setEnterpriseLicensed(true)
+                    setOpenSource(false)
                     setCloudLicensed(false)
                 }
 
@@ -45,8 +45,10 @@ export const ConfigProvider = ({ children }) => {
             })
             .catch((error) => {
                 console.error('Error fetching data:', error)
-                // M.A.T.E.: Fallback to open source on error
-                setOpenSource(true)
+                // M.A.T.E.: Fallback to Enterprise on error
+                setEnterpriseLicensed(true)
+                setOpenSource(false)
+                setCloudLicensed(false)
                 setLoading(false)
             })
     }, [])

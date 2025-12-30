@@ -100,6 +100,15 @@ export class IdentityManager {
     }
 
     private _validateLicenseKey = async () => {
+        // M.A.T.E.: Force Enterprise mode without external license validation
+        // When MATE_ENTERPRISE=true, skip all Flowise license checks and enable Enterprise features
+        if (process.env.MATE_ENTERPRISE === 'true') {
+            this.licenseValid = true
+            this.currentInstancePlatform = Platform.ENTERPRISE
+            console.log('M.A.T.E.: Enterprise mode enabled (license validation bypassed)')
+            return
+        }
+
         const LICENSE_URL = process.env.LICENSE_URL
         const FLOWISE_EE_LICENSE_KEY = process.env.FLOWISE_EE_LICENSE_KEY
 

@@ -5,14 +5,19 @@ import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 
 const getSettings = async () => {
     try {
+        // M.A.T.E.: Force Enterprise mode when MATE_ENTERPRISE=true
+        // This bypasses all Flowise license validation and enables all Enterprise features
+        if (process.env.MATE_ENTERPRISE === 'true') {
+            return { PLATFORM_TYPE: Platform.ENTERPRISE }
+        }
+
         const appServer = getRunningExpressApp()
         const platformType = appServer.identityManager.getPlatformType()
 
         switch (platformType) {
             case Platform.ENTERPRISE: {
                 if (!appServer.identityManager.isLicenseValid()) {
-                    // M.A.T.E.: Fallback to open source when license is invalid
-                    // This ensures the UI still works without a valid enterprise license
+                    // Fallback to open source when license is invalid
                     return { PLATFORM_TYPE: Platform.OPEN_SOURCE }
                 } else {
                     return { PLATFORM_TYPE: Platform.ENTERPRISE }
@@ -26,7 +31,7 @@ const getSettings = async () => {
             }
         }
     } catch (error) {
-        // M.A.T.E.: Return open source on error to ensure UI works
+        // Return open source on error to ensure UI works
         return { PLATFORM_TYPE: Platform.OPEN_SOURCE }
     }
 }
