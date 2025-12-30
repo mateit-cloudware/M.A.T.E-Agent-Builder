@@ -39,7 +39,7 @@ export const enum BalanceGateErrorMessage {
 /**
  * Interface for requests with user information
  */
-interface AuthenticatedRequest extends Request {
+interface AuthenticatedRequest extends Omit<Request, 'user'> {
     user?: {
         id: string
         email?: string
@@ -251,7 +251,7 @@ export const getBillingInfo = (req: Request): BillingInfo | null => {
  * Express middleware to track request duration for billing
  * Should be applied at the end of request processing
  */
-export const trackUsage = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const trackUsage = async (req: Request, res: Response, next: NextFunction) => {
     const billingInfo = getBillingInfo(req)
     if (!billingInfo) {
         return next()

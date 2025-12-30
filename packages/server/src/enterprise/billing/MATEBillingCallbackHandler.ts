@@ -13,7 +13,7 @@
  * - Voice: €1.50 per minute (handled separately via VAPI integration)
  */
 
-import { BaseCallbackHandler, RunCollectorCallbackHandler } from '@langchain/core/callbacks/base'
+import { BaseCallbackHandler } from '@langchain/core/callbacks/base'
 import { ChainValues } from '@langchain/core/utils/types'
 import { LLMResult, Generation } from '@langchain/core/outputs'
 import { Serialized } from '@langchain/core/load/serializable'
@@ -87,8 +87,8 @@ export class MATEBillingCallbackHandler extends BaseCallbackHandler {
         metadata?: Record<string, unknown>
     ): Promise<void> {
         // Extract model name if available
-        const modelName = (llm.kwargs as any)?.model || 
-                         (llm.kwargs as any)?.modelName ||
+        const modelName = (llm as any)?.kwargs?.model || 
+                         (llm as any)?.kwargs?.modelName ||
                          llm.id?.[llm.id.length - 1]
         
         if (modelName) {

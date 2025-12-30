@@ -17,7 +17,7 @@ import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import logger from '../../utils/logger'
 
 // Extend Request type to include user
-interface AuthenticatedRequest extends Request {
+interface AuthenticatedRequest extends Omit<Request, 'user'> {
     user?: {
         id: string
         email?: string

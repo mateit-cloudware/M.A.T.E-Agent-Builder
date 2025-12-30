@@ -20,7 +20,7 @@ import { User } from '../database/entities/user.entity'
 import { Wallet } from '../database/entities/wallet.entity'
 import logger from '../../utils/logger'
 
-interface AuthenticatedRequest extends Request {
+interface AuthenticatedRequest extends Omit<Request, 'user'> {
     user?: {
         id: string
         email?: string
