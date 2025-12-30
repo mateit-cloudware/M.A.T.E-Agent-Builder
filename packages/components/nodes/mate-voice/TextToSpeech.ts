@@ -1,4 +1,4 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../src/Interface'
 
 /**
  * Text-to-Speech Node for M.A.T.E.

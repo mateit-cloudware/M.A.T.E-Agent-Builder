@@ -1,4 +1,4 @@
-import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { ICommonObject, INode, INodeData, INodeParams } from '../../src/Interface'
 
 /**
  * M.A.T.E. Billing Node for Agent Flows
