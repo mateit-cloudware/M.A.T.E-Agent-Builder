@@ -8,7 +8,8 @@ export enum WalletTransactionType {
     TOPUP = 'TOPUP',           // Manual top-up via Stripe
     AUTO_TOPUP = 'AUTO_TOPUP', // Automatic top-up
     USAGE = 'USAGE',           // Usage deduction (Voice/LLM)
-    REFUND = 'REFUND'          // Refund
+    REFUND = 'REFUND',         // Refund
+    ADJUSTMENT = 'ADJUSTMENT'  // Admin manual adjustment
 }
 
 /**
