@@ -1,5 +1,18 @@
 # Railway Configuration für M.A.T.E. Agent Builder (Flowise Fork)
 # https://docs.railway.app/reference/config-as-code
+# 
+# Required Environment Variables:
+# - DATABASE_URL: PostgreSQL connection string
+# - SECRETKEY_PATH: Path to JWT secret file
+# - FLOWISE_USERNAME: Admin username
+# - FLOWISE_PASSWORD: Admin password
+# - STRIPE_SECRET_KEY: Stripe API key for billing
+# - STRIPE_WEBHOOK_SECRET: Stripe webhook signature secret
+#
+# Optional:
+# - PORT: Server port (default: 3000)
+# - CORS_ORIGINS: Allowed CORS origins
+# - LOG_LEVEL: debug|info|warn|error
 
 [build]
 builder = "nixpacks"
@@ -30,6 +43,6 @@ restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
 
 [deploy.healthcheck]
-path = "/"
+path = "/api/v1/ping"
 timeout = 120
 interval = 30
