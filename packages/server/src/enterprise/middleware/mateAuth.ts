@@ -208,6 +208,9 @@ const getOrCreateMateUser = async (payload: MateTokenPayload): Promise<LoggedInU
             await queryRunner.startTransaction()
             
             try {
+                // Use M.A.T.E. user_id as createdBy (it's a valid UUID from the dashboard)
+                const mateUserId = payload.user_id
+                
                 // Check for existing organizations
                 const organizations = await orgService.readOrganization(queryRunner)
                 
@@ -215,26 +218,40 @@ const getOrCreateMateUser = async (payload: MateTokenPayload): Promise<LoggedInU
                     // Use existing organization
                     organization = organizations[0]
                 } else {
-                    // Create new organization
+                    // Create new organization - will use user.id after user creation
+                    // First, create user to get valid UUID
+                    const newUser = queryRunner.manager.create(User, {
+                        email: payload.email,
+                        name: payload.name || payload.email.split('@')[0],
+                        status: UserStatus.ACTIVE,
+                        createdBy: mateUserId,  // Use M.A.T.E. user_id as UUID
+                        updatedBy: mateUserId
+                    })
+                    user = await queryRunner.manager.save(User, newUser)
+                    logger.info(`[M.A.T.E. SSO] Created user: ${user!.id}`)
+                    
+                    // Now create organization with user's ID
                     const newOrg = queryRunner.manager.create(Organization, {
                         name: OrganizationName.DEFAULT_ORGANIZATION,
-                        createdBy: 'mate-sso-system',
-                        updatedBy: 'mate-sso-system'
+                        createdBy: user!.id,
+                        updatedBy: user!.id
                     })
                     organization = await queryRunner.manager.save(Organization, newOrg)
                     logger.info(`[M.A.T.E. SSO] Created organization: ${organization!.id}`)
                 }
 
-                // Create user
-                const newUser = queryRunner.manager.create(User, {
-                    email: payload.email,
-                    name: payload.name || payload.email.split('@')[0],
-                    status: UserStatus.ACTIVE,
-                    createdBy: 'mate-sso-system',
-                    updatedBy: 'mate-sso-system'
-                })
-                user = await queryRunner.manager.save(User, newUser)
-                logger.info(`[M.A.T.E. SSO] Created user: ${user!.id}`)
+                // Create user if not already created
+                if (!user) {
+                    const newUser = queryRunner.manager.create(User, {
+                        email: payload.email,
+                        name: payload.name || payload.email.split('@')[0],
+                        status: UserStatus.ACTIVE,
+                        createdBy: mateUserId,  // Use M.A.T.E. user_id as UUID
+                        updatedBy: mateUserId
+                    })
+                    user = await queryRunner.manager.save(User, newUser)
+                    logger.info(`[M.A.T.E. SSO] Created user: ${user!.id}`)
+                }
 
                 // Create OrganizationUser
                 const { OrganizationUser } = await import('../database/entities/organization-user.entity')
