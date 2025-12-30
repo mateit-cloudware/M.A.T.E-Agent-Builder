@@ -32,8 +32,8 @@ import logger from '../../utils/logger'
 // M.A.T.E. JWT Secret - must match the Go backend's JWT_SECRET
 const MATE_JWT_SECRET = process.env.MATE_JWT_SECRET || process.env.JWT_SECRET || 'your-jwt-secret'
 
-// Enable/disable M.A.T.E. SSO
-const MATE_SSO_ENABLED = process.env.MATE_SSO_ENABLED !== 'false'
+// Enable/disable M.A.T.E. SSO (disabled by default - use native Flowise auth)
+const MATE_SSO_ENABLED = process.env.MATE_SSO_ENABLED === 'true'
 
 interface MateTokenPayload {
     user_id: string
