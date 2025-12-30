@@ -24,7 +24,8 @@ import {
     IconFileDatabase,
     IconShieldLock,
     IconListCheck,
-    IconWallet
+    IconWallet,
+    IconDashboard
 } from '@tabler/icons-react'
 
 // constant
@@ -53,7 +54,8 @@ const icons = {
     IconFileDatabase,
     IconShieldLock,
     IconListCheck,
-    IconWallet
+    IconWallet,
+    IconDashboard
 }
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
@@ -251,6 +253,16 @@ const dashboard = {
                     breadcrumbs: true,
                     display: 'feat:login-activity',
                     permission: 'loginActivity:view'
+                },
+                {
+                    id: 'admin-dashboard',
+                    title: 'Admin Dashboard',
+                    type: 'item',
+                    url: '/admin',
+                    icon: icons.IconDashboard,
+                    breadcrumbs: true,
+                    display: 'feat:users',
+                    permission: 'users:manage'
                 }
             ]
         },

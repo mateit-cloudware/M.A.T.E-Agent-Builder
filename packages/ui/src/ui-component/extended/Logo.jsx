@@ -1,4 +1,4 @@
-import logo from '@/assets/images/mate_logo.webp'
+import logo from '@/assets/images/mate_logo.png'
 
 // M.A.T.E. uses same logo for both themes
 const logoDark = logo

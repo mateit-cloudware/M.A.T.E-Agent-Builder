@@ -73,6 +73,9 @@ const WorkspaceDetails = Loadable(lazy(() => import('@/views/workspace/Workspace
 const SSOConfig = Loadable(lazy(() => import('@/views/auth/ssoConfig')))
 const SSOSuccess = Loadable(lazy(() => import('@/views/auth/ssoSuccess')))
 
+// admin dashboard
+const AdminDashboard = Loadable(lazy(() => import('@/views/admin')))
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -354,6 +357,14 @@ const MainRoutes = {
         {
             path: '/sso-success',
             element: <SSOSuccess />
+        },
+        {
+            path: '/admin',
+            element: (
+                <RequireAuth permission={'users:manage'} display={'feat:users'}>
+                    <AdminDashboard />
+                </RequireAuth>
+            )
         }
     ]
 }
