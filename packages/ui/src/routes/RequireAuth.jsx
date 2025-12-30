@@ -36,6 +36,17 @@ export const RequireAuth = ({ permission, display, children }) => {
     const features = useSelector((state) => state.auth.features)
     const permissions = useSelector((state) => state.auth.permissions)
 
+    // M.A.T.E.: Check if user is effectively an admin (matches useAuth logic)
+    const isEffectiveAdmin = () => {
+        if (isGlobal) return true
+        if (currentUser?.isOrganizationAdmin) return true
+        // Check if user has owner role in any workspace
+        if (currentUser?.assignedWorkspaces) {
+            return currentUser.assignedWorkspaces.some(ws => ws.role === 'owner')
+        }
+        return false
+    }
+
     // Step 0: Wait for config to load
     if (loading) {
         return null
@@ -63,7 +74,7 @@ export const RequireAuth = ({ permission, display, children }) => {
             }
 
             // Organization admins bypass permission checks
-            if (isGlobal) {
+            if (isEffectiveAdmin()) {
                 return checkFeatureFlag(features, display, children)
             }
 
@@ -75,8 +86,8 @@ export const RequireAuth = ({ permission, display, children }) => {
             return <Navigate to='/unauthorized' replace />
         }
 
-        // Standard routes: check permissions (global admins bypass)
-        if (permission && !hasPermission(permission) && !isGlobal) {
+        // Standard routes: check permissions (effective admins bypass)
+        if (permission && !hasPermission(permission) && !isEffectiveAdmin()) {
             return <Navigate to='/unauthorized' replace />
         }
 

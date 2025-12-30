@@ -2,14 +2,29 @@ import { useSelector } from 'react-redux'
 import { useConfig } from '@/store/context/ConfigContext'
 
 export const useAuth = () => {
-    const { isOpenSource } = useConfig()
+    const { isOpenSource, isEnterpriseLicensed } = useConfig()
     const permissions = useSelector((state) => state.auth.permissions)
     const features = useSelector((state) => state.auth.features)
     const isGlobal = useSelector((state) => state.auth.isGlobal)
     const currentUser = useSelector((state) => state.auth.user)
 
+    // M.A.T.E.: Check if user is effectively an admin
+    // This includes:
+    // 1. isGlobal flag (set from isOrganizationAdmin)
+    // 2. User has 'owner' role in their assigned workspaces (backup check)
+    // 3. User has isOrganizationAdmin property set to true
+    const isEffectiveAdmin = () => {
+        if (isGlobal) return true
+        if (currentUser?.isOrganizationAdmin) return true
+        // Check if user has owner role in any workspace
+        if (currentUser?.assignedWorkspaces) {
+            return currentUser.assignedWorkspaces.some(ws => ws.role === 'owner')
+        }
+        return false
+    }
+
     const hasPermission = (permissionId) => {
-        if (isOpenSource || isGlobal) {
+        if (isOpenSource || isEffectiveAdmin()) {
             return true
         }
         if (!permissionId) return false
@@ -21,7 +36,7 @@ export const useAuth = () => {
     }
 
     const hasAssignedWorkspace = (workspaceId) => {
-        if (isOpenSource || isGlobal) {
+        if (isOpenSource || isEffectiveAdmin()) {
             return true
         }
         const activeWorkspaceId = currentUser?.activeWorkspaceId || ''
@@ -36,9 +51,9 @@ export const useAuth = () => {
             return true
         }
 
-        // M.A.T.E.: Global admins (Organization Owners) should see all features
-        // This is consistent with hasPermission() behavior
-        if (isGlobal) {
+        // M.A.T.E.: Effective admins (Organization Owners) should see all features
+        // This uses the robust isEffectiveAdmin check for consistency
+        if (isEffectiveAdmin()) {
             return true
         }
 

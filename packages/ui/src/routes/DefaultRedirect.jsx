@@ -34,7 +34,18 @@ export const DefaultRedirect = () => {
     const { hasPermission, hasDisplay } = useAuth()
     const { isOpenSource } = useConfig()
     const isGlobal = useSelector((state) => state.auth.isGlobal)
+    const currentUser = useSelector((state) => state.auth.user)
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated)
+
+    // M.A.T.E.: Check if user is effectively an admin (matches useAuth logic)
+    const isEffectiveAdmin = () => {
+        if (isGlobal) return true
+        if (currentUser?.isOrganizationAdmin) return true
+        if (currentUser?.assignedWorkspaces) {
+            return currentUser.assignedWorkspaces.some(ws => ws.role === 'owner')
+        }
+        return false
+    }
 
     // Define the order of routes to check (based on the menu order in dashboard.js)
     const routesToCheck = [
@@ -73,8 +84,8 @@ export const DefaultRedirect = () => {
         return <Chatflows />
     }
 
-    // For global admins, show chatflows (they have access to everything)
-    if (isGlobal) {
+    // For effective admins, show chatflows (they have access to everything)
+    if (isEffectiveAdmin()) {
         return <Chatflows />
     }
 
