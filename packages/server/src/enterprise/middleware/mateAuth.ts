@@ -209,27 +209,69 @@ const getOrCreateMateUser = async (payload: MateTokenPayload): Promise<LoggedInU
             await queryRunner.startTransaction()
             
             try {
-                // Generate a new UUID for this user - will be used as self-reference for createdBy
-                const newUserId = uuidv4()
-                
-                // Check for existing organizations
+                // Check for existing organizations and users
                 const organizations = await orgService.readOrganization(queryRunner)
+                
+                // Find an existing user to use as createdBy (FK constraint requires existing user)
+                let creatorId: string | null = null
+                const existingUsers = await queryRunner.manager.find(User, { take: 1 })
+                if (existingUsers.length > 0) {
+                    creatorId = existingUsers[0].id
+                    logger.info(`[M.A.T.E. SSO] Using existing user ${creatorId} as creator`)
+                }
                 
                 if (organizations.length > 0) {
                     // Use existing organization
                     organization = organizations[0]
+                    
+                    // Create new user with existing user as createdBy
+                    if (creatorId) {
+                        const newUser = queryRunner.manager.create(User, {
+                            email: payload.email,
+                            name: payload.name || payload.email.split('@')[0],
+                            status: UserStatus.ACTIVE,
+                            createdBy: creatorId,
+                            updatedBy: creatorId
+                        })
+                        user = await queryRunner.manager.save(User, newUser)
+                        logger.info(`[M.A.T.E. SSO] Created user: ${user!.id}`)
+                    } else {
+                        // No existing user - this is a fresh database bootstrap
+                        // Use raw query to bypass FK constraint for first user
+                        const newUserId = uuidv4()
+                        await queryRunner.query(
+                            `INSERT INTO "user" (id, email, name, status, "createdBy", "updatedBy", "createdDate", "updatedDate") 
+                             VALUES ($1, $2, $3, $4, $1, $1, NOW(), NOW())`,
+                            [newUserId, payload.email, payload.name || payload.email.split('@')[0], UserStatus.ACTIVE]
+                        )
+                        user = await queryRunner.manager.findOne(User, { where: { id: newUserId } })
+                        logger.info(`[M.A.T.E. SSO] Bootstrap: Created first user with self-reference: ${user!.id}`)
+                    }
                 } else {
-                    // Create new organization - first need to create user with self-reference
-                    const newUser = queryRunner.manager.create(User, {
-                        id: newUserId,
-                        email: payload.email,
-                        name: payload.name || payload.email.split('@')[0],
-                        status: UserStatus.ACTIVE,
-                        createdBy: newUserId,  // Self-reference: user creates itself
-                        updatedBy: newUserId
-                    })
-                    user = await queryRunner.manager.save(User, newUser)
-                    logger.info(`[M.A.T.E. SSO] Created user with self-reference: ${user!.id}`)
+                    // No organization exists - bootstrap scenario
+                    if (!creatorId) {
+                        // Use raw query to bypass FK constraint for first user
+                        const newUserId = uuidv4()
+                        await queryRunner.query(
+                            `INSERT INTO "user" (id, email, name, status, "createdBy", "updatedBy", "createdDate", "updatedDate") 
+                             VALUES ($1, $2, $3, $4, $1, $1, NOW(), NOW())`,
+                            [newUserId, payload.email, payload.name || payload.email.split('@')[0], UserStatus.ACTIVE]
+                        )
+                        user = await queryRunner.manager.findOne(User, { where: { id: newUserId } })
+                        creatorId = user!.id
+                        logger.info(`[M.A.T.E. SSO] Bootstrap: Created first user with self-reference: ${user!.id}`)
+                    } else {
+                        // Create user with existing creator
+                        const newUser = queryRunner.manager.create(User, {
+                            email: payload.email,
+                            name: payload.name || payload.email.split('@')[0],
+                            status: UserStatus.ACTIVE,
+                            createdBy: creatorId,
+                            updatedBy: creatorId
+                        })
+                        user = await queryRunner.manager.save(User, newUser)
+                        logger.info(`[M.A.T.E. SSO] Created user: ${user!.id}`)
+                    }
                     
                     // Now create organization with user's ID
                     const newOrg = queryRunner.manager.create(Organization, {
@@ -239,20 +281,6 @@ const getOrCreateMateUser = async (payload: MateTokenPayload): Promise<LoggedInU
                     })
                     organization = await queryRunner.manager.save(Organization, newOrg)
                     logger.info(`[M.A.T.E. SSO] Created organization: ${organization!.id}`)
-                }
-
-                // Create user if not already created (when org already exists)
-                if (!user) {
-                    const newUser = queryRunner.manager.create(User, {
-                        id: newUserId,
-                        email: payload.email,
-                        name: payload.name || payload.email.split('@')[0],
-                        status: UserStatus.ACTIVE,
-                        createdBy: newUserId,  // Self-reference: user creates itself
-                        updatedBy: newUserId
-                    })
-                    user = await queryRunner.manager.save(User, newUser)
-                    logger.info(`[M.A.T.E. SSO] Created user: ${user!.id}`)
                 }
 
                 // Create OrganizationUser
