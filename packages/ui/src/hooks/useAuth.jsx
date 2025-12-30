@@ -15,11 +15,24 @@ export const useAuth = () => {
     // 3. User has 'owner' role in any assigned workspace (case-insensitive)
     // 4. User role name is 'owner' (case-insensitive backup)
     const isEffectiveAdmin = () => {
+        // Debug logging - remove in production
+        console.log('[M.A.T.E. Admin Debug] Checking admin status:')
+        console.log('[M.A.T.E. Admin Debug] isGlobal:', isGlobal, typeof isGlobal)
+        console.log('[M.A.T.E. Admin Debug] currentUser:', currentUser)
+        console.log('[M.A.T.E. Admin Debug] isOrganizationAdmin:', currentUser?.isOrganizationAdmin, typeof currentUser?.isOrganizationAdmin)
+        console.log('[M.A.T.E. Admin Debug] assignedWorkspaces:', currentUser?.assignedWorkspaces)
+        
         // Check 1: Redux isGlobal flag
-        if (isGlobal === true || isGlobal === 'true') return true
+        if (isGlobal === true || isGlobal === 'true') {
+            console.log('[M.A.T.E. Admin Debug] Admin via isGlobal')
+            return true
+        }
         
         // Check 2: User property isOrganizationAdmin
-        if (currentUser?.isOrganizationAdmin === true || currentUser?.isOrganizationAdmin === 'true') return true
+        if (currentUser?.isOrganizationAdmin === true || currentUser?.isOrganizationAdmin === 'true') {
+            console.log('[M.A.T.E. Admin Debug] Admin via isOrganizationAdmin')
+            return true
+        }
         
         // Check 3: User has owner role in assignedWorkspaces (case-insensitive)
         if (currentUser?.assignedWorkspaces && Array.isArray(currentUser.assignedWorkspaces)) {
@@ -27,14 +40,21 @@ export const useAuth = () => {
                 if (!ws?.role) return false
                 return ws.role.toLowerCase() === 'owner'
             })
-            if (hasOwnerRole) return true
+            if (hasOwnerRole) {
+                console.log('[M.A.T.E. Admin Debug] Admin via assignedWorkspaces owner role')
+                return true
+            }
         }
         
         // Check 4: User's current role is owner (case-insensitive)
         if (currentUser?.role && typeof currentUser.role === 'string') {
-            if (currentUser.role.toLowerCase() === 'owner') return true
+            if (currentUser.role.toLowerCase() === 'owner') {
+                console.log('[M.A.T.E. Admin Debug] Admin via user.role owner')
+                return true
+            }
         }
         
+        console.log('[M.A.T.E. Admin Debug] NOT admin - no criteria matched')
         return false
     }
 
