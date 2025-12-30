@@ -11,7 +11,9 @@ const getSettings = async () => {
         switch (platformType) {
             case Platform.ENTERPRISE: {
                 if (!appServer.identityManager.isLicenseValid()) {
-                    return {}
+                    // M.A.T.E.: Fallback to open source when license is invalid
+                    // This ensures the UI still works without a valid enterprise license
+                    return { PLATFORM_TYPE: Platform.OPEN_SOURCE }
                 } else {
                     return { PLATFORM_TYPE: Platform.ENTERPRISE }
                 }
@@ -24,7 +26,8 @@ const getSettings = async () => {
             }
         }
     } catch (error) {
-        return {}
+        // M.A.T.E.: Return open source on error to ensure UI works
+        return { PLATFORM_TYPE: Platform.OPEN_SOURCE }
     }
 }
 

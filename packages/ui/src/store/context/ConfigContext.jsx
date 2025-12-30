@@ -33,12 +33,20 @@ export const ConfigProvider = ({ children }) => {
                         setEnterpriseLicensed(false)
                         setCloudLicensed(false)
                     }
+                } else {
+                    // M.A.T.E.: Default to open source when PLATFORM_TYPE is missing
+                    // This ensures the UI works even without proper backend configuration
+                    setOpenSource(true)
+                    setEnterpriseLicensed(false)
+                    setCloudLicensed(false)
                 }
 
                 setLoading(false)
             })
             .catch((error) => {
                 console.error('Error fetching data:', error)
+                // M.A.T.E.: Fallback to open source on error
+                setOpenSource(true)
                 setLoading(false)
             })
     }, [])
