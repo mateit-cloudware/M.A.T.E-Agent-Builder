@@ -12,6 +12,7 @@
 
 import express, { NextFunction, Request, Response } from 'express'
 import jwt, { sign } from 'jsonwebtoken'
+import { v4 as uuidv4, v5 as uuidv5 } from 'uuid'
 import { LoggedInUser, IAssignedWorkspace } from '../Interface.Enterprise'
 import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { OrganizationService } from '../services/organization.service'
@@ -33,6 +34,30 @@ const MATE_JWT_SECRET = process.env.MATE_JWT_SECRET || process.env.JWT_SECRET ||
 
 // Enable/disable M.A.T.E. SSO
 const MATE_SSO_ENABLED = process.env.MATE_SSO_ENABLED !== 'false'
+
+// UUID namespace for deterministic UUID generation from non-UUID strings
+const MATE_UUID_NAMESPACE = '6ba7b810-9dad-11d1-80b4-00c04fd430c8' // DNS namespace UUID
+
+/**
+ * Check if a string is a valid UUID
+ */
+const isValidUUID = (str: string): boolean => {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+    return uuidRegex.test(str)
+}
+
+/**
+ * Convert any string to a valid UUID
+ * If the string is already a valid UUID, return it as-is
+ * Otherwise, generate a deterministic UUID v5 from the string
+ */
+const toValidUUID = (str: string): string => {
+    if (isValidUUID(str)) {
+        return str
+    }
+    // Generate a deterministic UUID v5 from the string
+    return uuidv5(str, MATE_UUID_NAMESPACE)
+}
 
 interface MateTokenPayload {
     user_id: string
@@ -208,8 +233,8 @@ const getOrCreateMateUser = async (payload: MateTokenPayload): Promise<LoggedInU
             await queryRunner.startTransaction()
             
             try {
-                // Use M.A.T.E. user_id as createdBy (it's a valid UUID from the dashboard)
-                const mateUserId = payload.user_id
+                // Use M.A.T.E. user_id as createdBy - convert to valid UUID if necessary
+                const mateUserId = toValidUUID(payload.user_id)
                 
                 // Check for existing organizations
                 const organizations = await orgService.readOrganization(queryRunner)
