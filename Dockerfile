@@ -35,7 +35,7 @@ COPY packages/components/package.json ./packages/components/
 COPY packages/server/package.json ./packages/server/
 COPY packages/ui/package.json ./packages/ui/
 
-RUN pnpm install --no-frozen-lockfile
+RUN pnpm install --shamefully-hoist
 
 COPY . .
 
