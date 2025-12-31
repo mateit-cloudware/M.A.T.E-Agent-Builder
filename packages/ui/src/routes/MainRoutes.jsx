@@ -79,6 +79,9 @@ const AdminDashboard = Loadable(lazy(() => import('@/views/admin')))
 // wizard - AI Agent Builder
 const AIAgentWizard = Loadable(lazy(() => import('@/views/wizard')))
 
+// transcriptions - Call Transcripts
+const Transcriptions = Loadable(lazy(() => import('@/views/transcriptions')))
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -374,6 +377,14 @@ const MainRoutes = {
             element: (
                 <RequireAuth>
                     <AIAgentWizard />
+                </RequireAuth>
+            )
+        },
+        {
+            path: '/transcriptions',
+            element: (
+                <RequireAuth>
+                    <Transcriptions />
                 </RequireAuth>
             )
         }

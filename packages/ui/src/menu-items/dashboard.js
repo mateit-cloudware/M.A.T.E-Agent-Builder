@@ -26,7 +26,8 @@ import {
     IconListCheck,
     IconWallet,
     IconDashboard,
-    IconWand
+    IconWand,
+    IconPhone
 } from '@tabler/icons-react'
 
 // constant
@@ -57,7 +58,8 @@ const icons = {
     IconListCheck,
     IconWallet,
     IconDashboard,
-    IconWand
+    IconWand,
+    IconPhone
 }
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
@@ -111,6 +113,14 @@ const dashboard = {
                     icon: icons.IconListCheck,
                     breadcrumbs: true,
                     permission: 'executions:view'
+                },
+                {
+                    id: 'transcriptions',
+                    title: 'Anrufe & Transkripte',
+                    type: 'item',
+                    url: '/transcriptions',
+                    icon: icons.IconPhone,
+                    breadcrumbs: true
                 },
                 {
                     id: 'assistants',

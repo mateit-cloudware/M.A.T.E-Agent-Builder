@@ -28,6 +28,7 @@ import { LoginMethod } from '../../enterprise/database/entities/login-method.ent
 import { LoginSession } from '../../enterprise/database/entities/login-session.entity'
 import { Wallet } from '../../enterprise/database/entities/wallet.entity'
 import { WalletTransaction } from '../../enterprise/database/entities/wallet-transaction.entity'
+import { CallTranscription } from '../../enterprise/database/entities/call-transcription.entity'
 
 export const entities = {
     ChatFlow,
@@ -61,5 +62,6 @@ export const entities = {
     LoginMethod,
     LoginSession,
     Wallet,
-    WalletTransaction
+    WalletTransaction,
+    CallTranscription
 }
