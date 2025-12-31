@@ -86,6 +86,9 @@ const AIAgentWizard = Loadable(lazy(() => import('@/views/wizard')))
 // transcriptions - Call Transcripts
 const Transcriptions = Loadable(lazy(() => import('@/views/transcriptions')))
 
+// GDPR / Privacy Center
+const PrivacyCenter = Loadable(lazy(() => import('@/views/gdpr/PrivacyCenter')))
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -421,6 +424,22 @@ const MainRoutes = {
             element: (
                 <RequireAuth>
                     <Transcriptions />
+                </RequireAuth>
+            )
+        },
+        {
+            path: '/privacy',
+            element: (
+                <RequireAuth>
+                    <PrivacyCenter />
+                </RequireAuth>
+            )
+        },
+        {
+            path: '/settings/privacy',
+            element: (
+                <RequireAuth>
+                    <PrivacyCenter />
                 </RequireAuth>
             )
         }

@@ -23,6 +23,7 @@ import express from 'express'
 import { AdminController } from '../controllers/admin.controller'
 import { SystemConfigController } from '../controllers/system-config.controller'
 import auditLogController from '../controllers/audit-log.controller'
+import gdprController from '../controllers/gdpr.controller'
 import { checkPermission } from '../rbac/PermissionCheck'
 
 const router = express.Router()
@@ -76,5 +77,10 @@ router.get('/audit-logs/:id', requireAdminPermission, auditLogController.getAudi
 router.post('/audit-logs/verify-integrity', requireAdminPermission, auditLogController.verifyIntegrity)
 router.post('/audit-logs/export', requireAdminPermission, auditLogController.exportAuditLogs)
 router.post('/audit-logs/run-retention', requireAdminPermission, auditLogController.runRetentionPolicy)
+
+// ===== GDPR Admin Routes (S2 DSGVO) =====
+router.get('/gdpr/stats', requireAdminPermission, gdprController.getGDPRStats)
+router.put('/gdpr/settings', requireAdminPermission, gdprController.updateGDPRSettings)
+router.post('/gdpr/run-cleanup', requireAdminPermission, gdprController.runRetentionCleanup)
 
 export default router

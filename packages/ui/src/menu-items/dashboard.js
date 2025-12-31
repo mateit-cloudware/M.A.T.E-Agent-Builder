@@ -365,6 +365,14 @@ const dashboard = {
                     url: '/account',
                     icon: icons.IconSettings,
                     breadcrumbs: true
+                },
+                {
+                    id: 'privacy',
+                    title: 'Datenschutz',
+                    type: 'item',
+                    url: '/privacy',
+                    icon: icons.IconShieldLock,
+                    breadcrumbs: true
                 }
             ]
         }
