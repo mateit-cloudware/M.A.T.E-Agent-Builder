@@ -12,7 +12,7 @@ import logger from '../../utils/logger'
  * - OPENROUTER_API_KEY: API-Key für OpenRouter
  * - OPENROUTER_BASE_URL: API-Endpunkt (default: https://openrouter.ai/api/v1)
  * - LLM_DEFAULT_MODEL: Standard-Modell (default: moonshotai/kimi-k2)
- * - LLM_FALLBACK_MODEL: Fallback-Modell (default: openai/gpt-4o-mini)
+ * - LLM_FALLBACK_MODEL: Fallback-Modell (default: qwen/qwen3-max)
  */
 
 export interface LLMRequestOptions {
@@ -122,10 +122,23 @@ export const TOKEN_PRICING = {
         input: 0.14,
         output: 0.28
     },
-    // Default Fallback
+    // Qwen (Alibaba) - Fallback-Modell für M.A.T.E.
+    'qwen/qwen3-max': {
+        input: 0.40,    // €0.40 pro 1M Input-Tokens
+        output: 0.80    // €0.80 pro 1M Output-Tokens
+    },
+    'qwen/qwen3-235b-a22b': {
+        input: 0.20,
+        output: 0.40
+    },
+    'qwen/qwen-turbo': {
+        input: 0.05,
+        output: 0.10
+    },
+    // Default Fallback (basierend auf Qwen3-Max Pricing)
     'default': {
-        input: 0.50,
-        output: 1.50
+        input: 0.40,
+        output: 0.80
     }
 } as const
 
@@ -163,7 +176,7 @@ class LLMProxyService {
             apiKey: process.env.OPENROUTER_API_KEY || '',
             baseUrl: process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1',
             defaultModel: process.env.LLM_DEFAULT_MODEL || 'moonshotai/kimi-k2',
-            fallbackModel: process.env.LLM_FALLBACK_MODEL || 'openai/gpt-4o-mini',
+            fallbackModel: process.env.LLM_FALLBACK_MODEL || 'qwen/qwen3-max',
             maxRetries: parseInt(process.env.LLM_MAX_RETRIES || '3'),
             timeoutMs: parseInt(process.env.LLM_TIMEOUT_MS || '30000')
         }
