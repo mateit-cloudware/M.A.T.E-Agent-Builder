@@ -42,7 +42,8 @@ startCommand = "pnpm start"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
 
-[deploy.healthcheck]
-path = "/api/v1/ping"
-timeout = 120
-interval = 30
+# Health check temporarily disabled to debug 502
+# [deploy.healthcheck]
+# path = "/api/v1/ping"
+# timeout = 120
+# interval = 30
