@@ -25,11 +25,21 @@ const getTransactions = (params = {}) => {
 }
 
 // Get usage summary for a period
-const getUsageSummary = (startDate, endDate) => {
+const getUsageSummary = (year, month) => {
     const params = new URLSearchParams()
-    if (startDate) params.append('startDate', startDate)
-    if (endDate) params.append('endDate', endDate)
+    if (year) params.append('year', year)
+    if (month) params.append('month', month)
     return client.get(`/wallet/usage?${params.toString()}`)
+}
+
+// Get invoice data for a month
+const getInvoice = (year, month) => {
+    return client.get(`/wallet/invoice/${year}/${month}`)
+}
+
+// Download invoice as PDF
+const downloadInvoicePDF = (year, month) => {
+    return client.get(`/wallet/invoice/${year}/${month}/pdf`, { responseType: 'blob' })
 }
 
 // Get pricing information
@@ -49,6 +59,8 @@ export default {
     getBalance,
     getTransactions,
     getUsageSummary,
+    getInvoice,
+    downloadInvoicePDF,
     getPricing,
     estimateCost,
     updateAutoTopup,
