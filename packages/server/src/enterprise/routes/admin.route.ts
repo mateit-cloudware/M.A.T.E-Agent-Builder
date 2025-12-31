@@ -11,6 +11,10 @@
  * - GET /admin/config - All system configurations
  * - PUT /admin/config/:key - Update single config
  * - PUT /admin/config - Batch update configs
+ * - GET /admin/audit-logs - List audit logs
+ * - GET /admin/audit-logs/stats - Audit log statistics
+ * - POST /admin/audit-logs/verify-integrity - Verify hash chain
+ * - POST /admin/audit-logs/export - Export logs (CSV/JSON)
  * 
  * All endpoints require 'users:manage' permission (SuperAdmin)
  */
@@ -18,6 +22,7 @@
 import express from 'express'
 import { AdminController } from '../controllers/admin.controller'
 import { SystemConfigController } from '../controllers/system-config.controller'
+import auditLogController from '../controllers/audit-log.controller'
 import { checkPermission } from '../rbac/PermissionCheck'
 
 const router = express.Router()
@@ -62,5 +67,14 @@ router.put('/config/:key', requireAdminPermission, configController.updateConfig
 // Admin utilities
 router.post('/config/initialize', requireAdminPermission, configController.initializeDefaults)
 router.post('/config/cache/invalidate', requireAdminPermission, configController.invalidateCache)
+
+// ===== Audit Log Routes (S1.4) =====
+router.get('/audit-logs', requireAdminPermission, auditLogController.listAuditLogs)
+router.get('/audit-logs/stats', requireAdminPermission, auditLogController.getAuditLogStats)
+router.get('/audit-logs/filter-options', requireAdminPermission, auditLogController.getFilterOptions)
+router.get('/audit-logs/:id', requireAdminPermission, auditLogController.getAuditLog)
+router.post('/audit-logs/verify-integrity', requireAdminPermission, auditLogController.verifyIntegrity)
+router.post('/audit-logs/export', requireAdminPermission, auditLogController.exportAuditLogs)
+router.post('/audit-logs/run-retention', requireAdminPermission, auditLogController.runRetentionPolicy)
 
 export default router

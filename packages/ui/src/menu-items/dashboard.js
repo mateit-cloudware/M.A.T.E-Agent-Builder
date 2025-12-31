@@ -325,6 +325,15 @@ const dashboard = {
                     permission: 'users:manage'
                 },
                 {
+                    id: 'audit-logs',
+                    title: 'Audit-Logs',
+                    type: 'item',
+                    url: '/admin/audit-logs',
+                    icon: icons.IconFileDatabase,
+                    breadcrumbs: true,
+                    permission: 'users:manage'
+                },
+                {
                     id: 'logs',
                     title: 'System-Logs',
                     type: 'item',

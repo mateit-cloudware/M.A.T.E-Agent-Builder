@@ -78,6 +78,7 @@ const AdminDashboard = Loadable(lazy(() => import('@/views/admin')))
 const PlatformConfig = Loadable(lazy(() => import('@/views/admin/PlatformConfig')))
 const GuardrailsConfig = Loadable(lazy(() => import('@/views/admin/GuardrailsConfig')))
 const GuardrailsAnalytics = Loadable(lazy(() => import('@/views/admin/GuardrailsAnalytics')))
+const AuditLogViewer = Loadable(lazy(() => import('@/views/admin/AuditLogViewer')))
 
 // wizard - AI Agent Builder
 const AIAgentWizard = Loadable(lazy(() => import('@/views/wizard')))
@@ -396,6 +397,14 @@ const MainRoutes = {
             element: (
                 <RequireAuth permission={'users:manage'}>
                     <GuardrailsAnalytics />
+                </RequireAuth>
+            )
+        },
+        {
+            path: '/admin/audit-logs',
+            element: (
+                <RequireAuth permission={'users:manage'}>
+                    <AuditLogViewer />
                 </RequireAuth>
             )
         },
