@@ -73,6 +73,7 @@ import adminRouter from '../enterprise/routes/admin.route'
 import agentGeneratorRouter from '../enterprise/routes/agent-generator.route'
 import transcriptionRouter from '../enterprise/routes/transcription.route'
 import vapiRouter from '../enterprise/routes/vapi.route'
+import guardrailsRouter from '../enterprise/routes/guardrails.route'
 import { IdentityManager } from '../IdentityManager'
 
 const router = express.Router()
@@ -149,6 +150,7 @@ router.use('/admin', adminRouter)
 router.use('/agent-generator', agentGeneratorRouter)
 router.use('/transcriptions', transcriptionRouter)
 router.use('/vapi', vapiRouter)
+router.use('/guardrails', guardrailsRouter)
 router.use('/logs', IdentityManager.checkFeatureByPlan('feat:logs'), logsRouter)
 router.use('/files', IdentityManager.checkFeatureByPlan('feat:files'), filesRouter)
 

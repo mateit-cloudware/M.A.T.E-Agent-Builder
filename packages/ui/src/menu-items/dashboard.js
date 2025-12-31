@@ -27,7 +27,9 @@ import {
     IconWallet,
     IconDashboard,
     IconWand,
-    IconPhone
+    IconPhone,
+    IconShield,
+    IconChartBar
 } from '@tabler/icons-react'
 
 // constant
@@ -59,7 +61,9 @@ const icons = {
     IconWallet,
     IconDashboard,
     IconWand,
-    IconPhone
+    IconPhone,
+    IconShield,
+    IconChartBar
 }
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
@@ -301,6 +305,24 @@ const dashboard = {
                     icon: icons.IconClipboardList,
                     breadcrumbs: true,
                     permission: 'loginActivity:view'
+                },
+                {
+                    id: 'guardrails',
+                    title: 'AI Guardrails',
+                    type: 'item',
+                    url: '/admin/guardrails',
+                    icon: icons.IconShield,
+                    breadcrumbs: true,
+                    permission: 'users:manage'
+                },
+                {
+                    id: 'guardrails-analytics',
+                    title: 'Guardrails Analytics',
+                    type: 'item',
+                    url: '/admin/guardrails/analytics',
+                    icon: icons.IconChartBar,
+                    breadcrumbs: true,
+                    permission: 'users:manage'
                 },
                 {
                     id: 'logs',

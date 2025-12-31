@@ -76,6 +76,8 @@ const SSOSuccess = Loadable(lazy(() => import('@/views/auth/ssoSuccess')))
 // admin dashboard
 const AdminDashboard = Loadable(lazy(() => import('@/views/admin')))
 const PlatformConfig = Loadable(lazy(() => import('@/views/admin/PlatformConfig')))
+const GuardrailsConfig = Loadable(lazy(() => import('@/views/admin/GuardrailsConfig')))
+const GuardrailsAnalytics = Loadable(lazy(() => import('@/views/admin/GuardrailsAnalytics')))
 
 // wizard - AI Agent Builder
 const AIAgentWizard = Loadable(lazy(() => import('@/views/wizard')))
@@ -378,6 +380,22 @@ const MainRoutes = {
             element: (
                 <RequireAuth permission={'users:manage'}>
                     <PlatformConfig />
+                </RequireAuth>
+            )
+        },
+        {
+            path: '/admin/guardrails',
+            element: (
+                <RequireAuth permission={'users:manage'}>
+                    <GuardrailsConfig />
+                </RequireAuth>
+            )
+        },
+        {
+            path: '/admin/guardrails/analytics',
+            element: (
+                <RequireAuth permission={'users:manage'}>
+                    <GuardrailsAnalytics />
                 </RequireAuth>
             )
         },
