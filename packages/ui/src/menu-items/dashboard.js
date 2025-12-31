@@ -69,9 +69,9 @@ const dashboard = {
     title: '',
     type: 'group',
     children: [
-        // ==============================|| AGENTEN ||============================== //
+        // ==============================|| PRIMARY (Agenten) ||============================== //
         {
-            id: 'agents',
+            id: 'primary',
             title: 'Agenten',
             type: 'group',
             children: [
@@ -231,7 +231,7 @@ const dashboard = {
                     permission: 'evaluators:view'
                 },
                 {
-                    id: 'evaluations',
+                    id: 'evaluations-view',
                     title: 'Auswertungen',
                     type: 'item',
                     url: '/evaluations',
