@@ -37,10 +37,10 @@ export class MFASetting {
     @Column({ name: 'used_backup_codes', type: 'simple-json', nullable: true })
     usedBackupCodes?: string[]
 
-    @Column({ name: 'verified_at', type: 'datetime', nullable: true })
+    @Column({ name: 'verified_at', type: 'timestamp', nullable: true })
     verifiedAt?: Date
 
-    @Column({ name: 'last_used_at', type: 'datetime', nullable: true })
+    @Column({ name: 'last_used_at', type: 'timestamp', nullable: true })
     lastUsedAt?: Date
 
     @Column({ name: 'setup_completed', type: 'boolean', default: false })

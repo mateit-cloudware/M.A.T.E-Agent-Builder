@@ -56,16 +56,16 @@ export class UserSession {
     @Column({ name: 'mfa_verified', type: 'boolean', default: false })
     mfaVerified: boolean = false
 
-    @Column({ name: 'last_activity', type: 'datetime' })
+    @Column({ name: 'last_activity', type: 'timestamp' })
     lastActivity: Date = new Date()
 
-    @Column({ name: 'expires_at', type: 'datetime' })
+    @Column({ name: 'expires_at', type: 'timestamp' })
     expiresAt: Date = new Date()
 
-    @Column({ name: 'absolute_expiry', type: 'datetime' })
+    @Column({ name: 'absolute_expiry', type: 'timestamp' })
     absoluteExpiry: Date = new Date()  // Max Lebensdauer unabhängig von Aktivität
 
-    @Column({ name: 'revoked_at', type: 'datetime', nullable: true })
+    @Column({ name: 'revoked_at', type: 'timestamp', nullable: true })
     revokedAt?: Date
 
     @Column({ name: 'revoked_reason', type: 'varchar', length: 255, nullable: true })

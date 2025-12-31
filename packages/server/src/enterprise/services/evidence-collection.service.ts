@@ -89,10 +89,10 @@ export class AuditEvidence {
     @Column({ name: 'collection_method', type: 'varchar', length: 50 })
     collectionMethod: 'automated' | 'manual' = 'automated'
 
-    @Column({ name: 'audit_period_start', type: 'datetime' })
+    @Column({ name: 'audit_period_start', type: 'timestamp' })
     auditPeriodStart: Date = new Date()
 
-    @Column({ name: 'audit_period_end', type: 'datetime' })
+    @Column({ name: 'audit_period_end', type: 'timestamp' })
     auditPeriodEnd: Date = new Date()
 
     @Column({ type: 'simple-json', nullable: true })
@@ -104,7 +104,7 @@ export class AuditEvidence {
     @Column({ name: 'reviewer_id', type: 'uuid', nullable: true })
     reviewerId?: string
 
-    @Column({ name: 'reviewed_at', type: 'datetime', nullable: true })
+    @Column({ name: 'reviewed_at', type: 'timestamp', nullable: true })
     reviewedAt?: Date
 
     @Column({ name: 'reviewer_notes', type: 'text', nullable: true })

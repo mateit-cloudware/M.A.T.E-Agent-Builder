@@ -71,13 +71,13 @@ export class ConsentRecord {
     userAgent?: string
 
     // Zeitstempel
-    @Column({ name: 'granted_at', type: 'datetime', nullable: true })
+    @Column({ name: 'granted_at', type: 'timestamp', nullable: true })
     grantedAt?: Date
 
-    @Column({ name: 'withdrawn_at', type: 'datetime', nullable: true })
+    @Column({ name: 'withdrawn_at', type: 'timestamp', nullable: true })
     withdrawnAt?: Date
 
-    @Column({ name: 'expires_at', type: 'datetime', nullable: true })
+    @Column({ name: 'expires_at', type: 'timestamp', nullable: true })
     expiresAt?: Date
 
     // Rechtsgrundlage und Zwecke
@@ -154,16 +154,16 @@ export class DataExportRequest {
     dataCategories?: string[]
 
     // Zeitstempel
-    @Column({ name: 'requested_at', type: 'datetime' })
+    @Column({ name: 'requested_at', type: 'timestamp' })
     requestedAt: Date = new Date()
 
-    @Column({ name: 'processed_at', type: 'datetime', nullable: true })
+    @Column({ name: 'processed_at', type: 'timestamp', nullable: true })
     processedAt?: Date
 
-    @Column({ name: 'expires_at', type: 'datetime', nullable: true })
+    @Column({ name: 'expires_at', type: 'timestamp', nullable: true })
     expiresAt?: Date
 
-    @Column({ name: 'downloaded_at', type: 'datetime', nullable: true })
+    @Column({ name: 'downloaded_at', type: 'timestamp', nullable: true })
     downloadedAt?: Date
 
     // Export-Details
@@ -239,13 +239,13 @@ export class DeletionRequest {
     status: DeletionRequestStatus = DeletionRequestStatus.PENDING
 
     // Zeitstempel
-    @Column({ name: 'requested_at', type: 'datetime' })
+    @Column({ name: 'requested_at', type: 'timestamp' })
     requestedAt: Date = new Date()
 
-    @Column({ name: 'scheduled_at', type: 'datetime' })
+    @Column({ name: 'scheduled_at', type: 'timestamp' })
     scheduledAt: Date = new Date()
 
-    @Column({ name: 'processed_at', type: 'datetime', nullable: true })
+    @Column({ name: 'processed_at', type: 'timestamp', nullable: true })
     processedAt?: Date
 
     // Zu löschende Kategorien
@@ -264,7 +264,7 @@ export class DeletionRequest {
     @Column({ name: 'cancellation_reason', type: 'text', nullable: true })
     cancellationReason?: string
 
-    @Column({ name: 'cancelled_at', type: 'datetime', nullable: true })
+    @Column({ name: 'cancelled_at', type: 'timestamp', nullable: true })
     cancelledAt?: Date
 
     // Admin-Override (sofortige Löschung)
@@ -329,10 +329,10 @@ export class ProcessingRestriction {
     reason: ProcessingRestrictionReason = ProcessingRestrictionReason.USER_REQUEST
 
     // Zeitraum
-    @Column({ name: 'start_date', type: 'datetime' })
+    @Column({ name: 'start_date', type: 'timestamp' })
     startDate: Date = new Date()
 
-    @Column({ name: 'end_date', type: 'datetime', nullable: true })
+    @Column({ name: 'end_date', type: 'timestamp', nullable: true })
     endDate?: Date
 
     @Column({ name: 'is_active', type: 'boolean', default: true })
@@ -419,10 +419,10 @@ export class CookieConsentLog {
     consents: Record<string, boolean> = {}
 
     // Banner-Interaktion
-    @Column({ name: 'banner_shown_at', type: 'datetime' })
+    @Column({ name: 'banner_shown_at', type: 'timestamp' })
     bannerShownAt: Date = new Date()
 
-    @Column({ name: 'decision_made_at', type: 'datetime', nullable: true })
+    @Column({ name: 'decision_made_at', type: 'timestamp', nullable: true })
     decisionMadeAt?: Date
 
     @Column({ name: 'decision_type', type: 'varchar', length: 30, nullable: true })

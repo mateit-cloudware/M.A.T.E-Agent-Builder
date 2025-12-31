@@ -68,10 +68,10 @@ export class SystemConfig {
     @Column({ type: 'varchar', length: 36, name: 'updated_by', nullable: true })
     updatedBy: string
 
-    @CreateDateColumn({ type: 'datetime', name: 'created_at' })
+    @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
     createdAt: Date
 
-    @UpdateDateColumn({ type: 'datetime', name: 'updated_at' })
+    @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
     updatedAt: Date
 }
 

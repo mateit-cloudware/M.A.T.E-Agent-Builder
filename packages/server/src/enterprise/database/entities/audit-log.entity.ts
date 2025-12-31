@@ -172,7 +172,7 @@ export class AuditLog {
     sequenceNumber!: number
 
     // Zeitstempel (nicht veränderbar)
-    @CreateDateColumn({ type: 'datetime', name: 'created_at' })
+    @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
     @Index()
     createdAt: Date = new Date()
 
@@ -313,7 +313,7 @@ export class AuditLog {
     /**
      * Ablaufdatum basierend auf Retention Policy
      */
-    @Column({ type: 'datetime', name: 'expires_at', nullable: true })
+    @Column({ type: 'timestamp', name: 'expires_at', nullable: true })
     @Index()
     expiresAt?: Date
 
@@ -326,7 +326,7 @@ export class AuditLog {
     /**
      * Export-Zeitstempel
      */
-    @Column({ type: 'datetime', name: 'exported_at', nullable: true })
+    @Column({ type: 'timestamp', name: 'exported_at', nullable: true })
     exportedAt?: Date
 
     // ==================== HELPER METHODS ====================
@@ -418,7 +418,7 @@ export class AuditRetentionSettings {
     /**
      * Letzte Bereinigung
      */
-    @Column({ type: 'datetime', name: 'last_cleanup_at', nullable: true })
+    @Column({ type: 'timestamp', name: 'last_cleanup_at', nullable: true })
     lastCleanupAt?: Date
 
     /**
@@ -439,10 +439,10 @@ export class AuditRetentionSettings {
     @Column({ type: 'varchar', length: 500, name: 'export_path', nullable: true })
     exportPath?: string
 
-    @CreateDateColumn({ type: 'datetime', name: 'created_at' })
+    @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
     createdAt: Date = new Date()
 
-    @Column({ type: 'datetime', name: 'updated_at', nullable: true })
+    @Column({ type: 'timestamp', name: 'updated_at', nullable: true })
     updatedAt?: Date
 }
 
@@ -467,13 +467,13 @@ export class AuditExportHistory {
     /**
      * Zeitraum Start
      */
-    @Column({ type: 'datetime', name: 'period_start' })
+    @Column({ type: 'timestamp', name: 'period_start' })
     periodStart!: Date
 
     /**
      * Zeitraum Ende
      */
-    @Column({ type: 'datetime', name: 'period_end' })
+    @Column({ type: 'timestamp', name: 'period_end' })
     periodEnd!: Date
 
     /**
@@ -518,6 +518,6 @@ export class AuditExportHistory {
     @Column({ type: 'varchar', length: 500, name: 'export_reason', nullable: true })
     exportReason?: string
 
-    @CreateDateColumn({ type: 'datetime', name: 'created_at' })
+    @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
     createdAt: Date = new Date()
 }
