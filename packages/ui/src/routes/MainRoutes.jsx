@@ -75,6 +75,7 @@ const SSOSuccess = Loadable(lazy(() => import('@/views/auth/ssoSuccess')))
 
 // admin dashboard
 const AdminDashboard = Loadable(lazy(() => import('@/views/admin')))
+const PlatformConfig = Loadable(lazy(() => import('@/views/admin/PlatformConfig')))
 
 // wizard - AI Agent Builder
 const AIAgentWizard = Loadable(lazy(() => import('@/views/wizard')))
@@ -369,6 +370,14 @@ const MainRoutes = {
             element: (
                 <RequireAuth permission={'users:manage'}>
                     <AdminDashboard />
+                </RequireAuth>
+            )
+        },
+        {
+            path: '/admin/config',
+            element: (
+                <RequireAuth permission={'users:manage'}>
+                    <PlatformConfig />
                 </RequireAuth>
             )
         },

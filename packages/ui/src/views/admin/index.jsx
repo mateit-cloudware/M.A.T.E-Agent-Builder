@@ -7,6 +7,7 @@
  * Requires 'users:manage' permission.
  */
 import { useEffect, useState, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
     Box,
     Card,
@@ -49,7 +50,8 @@ import {
     IconEye,
     IconMicrophone,
     IconBrain,
-    IconCoin
+    IconCoin,
+    IconSettings
 } from '@tabler/icons-react'
 
 import MainCard from '@/ui-component/cards/MainCard'
@@ -131,6 +133,7 @@ const TabPanel = ({ children, value, index }) => (
 
 const AdminDashboard = () => {
     const theme = useTheme()
+    const navigate = useNavigate()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [tabValue, setTabValue] = useState(0)
@@ -266,11 +269,23 @@ const AdminDashboard = () => {
         <MainCard
             title="SuperAdmin Dashboard"
             secondary={
-                <Tooltip title="Aktualisieren">
-                    <IconButton onClick={handleRefresh} disabled={loading}>
-                        <IconRefresh size={20} />
-                    </IconButton>
-                </Tooltip>
+                <Stack direction="row" spacing={1}>
+                    <Tooltip title="Plattform-Konfiguration">
+                        <Button
+                            variant="outlined"
+                            size="small"
+                            startIcon={<IconSettings size={18} />}
+                            onClick={() => navigate('/admin/config')}
+                        >
+                            Konfiguration
+                        </Button>
+                    </Tooltip>
+                    <Tooltip title="Aktualisieren">
+                        <IconButton onClick={handleRefresh} disabled={loading}>
+                            <IconRefresh size={20} />
+                        </IconButton>
+                    </Tooltip>
+                </Stack>
             }
         >
             {error && (
