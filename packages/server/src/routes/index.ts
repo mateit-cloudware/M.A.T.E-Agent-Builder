@@ -68,6 +68,7 @@ import workspaceUserRouter from '../enterprise/routes/workspace-user.route'
 import accountRouter from '../enterprise/routes/account.route'
 import loginMethodRouter from '../enterprise/routes/login-method.route'
 import walletRouter from '../enterprise/routes/wallet.route'
+import tokenUsageRouter from '../enterprise/routes/token-usage.route'
 import adminRouter from '../enterprise/routes/admin.route'
 import agentGeneratorRouter from '../enterprise/routes/agent-generator.route'
 import transcriptionRouter from '../enterprise/routes/transcription.route'
@@ -142,6 +143,7 @@ router.use('/workspaceuser', workspaceUserRouter)
 router.use('/account', accountRouter)
 router.use('/loginmethod', loginMethodRouter)
 router.use('/wallet', walletRouter)
+router.use('/token-usage', tokenUsageRouter)
 router.use('/admin', adminRouter)
 router.use('/agent-generator', agentGeneratorRouter)
 router.use('/transcriptions', transcriptionRouter)
