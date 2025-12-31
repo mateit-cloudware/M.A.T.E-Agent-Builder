@@ -29,6 +29,12 @@ import { LoginSession } from '../../enterprise/database/entities/login-session.e
 import { Wallet } from '../../enterprise/database/entities/wallet.entity'
 import { WalletTransaction } from '../../enterprise/database/entities/wallet-transaction.entity'
 import { CallTranscription } from '../../enterprise/database/entities/call-transcription.entity'
+import { TokenUsage } from '../../enterprise/database/entities/token-usage.entity'
+import { UsageRecord } from '../../enterprise/database/entities/usage-record.entity'
+import { SystemConfig } from '../../enterprise/database/entities/system-config.entity'
+import { AuditLog } from '../../enterprise/database/entities/audit-log.entity'
+import { GuardrailConfig, GuardrailAuditLog } from '../../enterprise/database/entities/guardrail.entity'
+import { ConsentRecord, DataExportRequest, DeletionRequest, ProcessingRestriction } from '../../enterprise/database/entities/gdpr.entity'
 
 export const entities = {
     ChatFlow,
@@ -63,5 +69,15 @@ export const entities = {
     LoginSession,
     Wallet,
     WalletTransaction,
-    CallTranscription
+    CallTranscription,
+    TokenUsage,
+    UsageRecord,
+    SystemConfig,
+    AuditLog,
+    GuardrailConfig,
+    GuardrailAuditLog,
+    ConsentRecord,
+    DataExportRequest,
+    DeletionRequest,
+    ProcessingRestriction
 }
