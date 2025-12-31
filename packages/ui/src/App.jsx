@@ -12,6 +12,9 @@ import themes from '@/themes'
 // project imports
 import NavigationScroll from '@/layout/NavigationScroll'
 
+// tour system
+import { TourProvider, TourOverlay, tourSteps } from '@/ui-component/tour'
+
 // ==============================|| APP ||============================== //
 
 const App = () => {
@@ -21,9 +24,12 @@ const App = () => {
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={themes(customization)}>
                 <CssBaseline />
-                <NavigationScroll>
-                    <Routes />
-                </NavigationScroll>
+                <TourProvider steps={tourSteps}>
+                    <NavigationScroll>
+                        <Routes />
+                    </NavigationScroll>
+                    <TourOverlay />
+                </TourProvider>
             </ThemeProvider>
         </StyledEngineProvider>
     )

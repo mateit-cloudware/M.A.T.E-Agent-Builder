@@ -17,6 +17,9 @@ import PricingDialog from '@/ui-component/subscription/PricingDialog'
 // assets
 import { IconMenu2, IconX, IconSparkles } from '@tabler/icons-react'
 
+// tour
+import { TourStartButton } from '@/ui-component/tour'
+
 // store
 import { store } from '@/store'
 import { SET_DARKMODE } from '@/store/actions'
@@ -309,6 +312,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                     }}
                 />
             )}
+            <TourStartButton size="small" />
             <MaterialUISwitch checked={isDark} onChange={changeDarkMode} />
             <Box sx={{ ml: 2 }}></Box>
             <ProfileSection handleLogout={signOutClicked} />
