@@ -69,9 +69,10 @@ const dashboard = {
     title: '',
     type: 'group',
     children: [
+        // ==============================|| AGENTEN ||============================== //
         {
-            id: 'primary',
-            title: '',
+            id: 'agents',
+            title: 'Agenten',
             type: 'group',
             children: [
                 {
@@ -89,7 +90,7 @@ const dashboard = {
                 },
                 {
                     id: 'chatflows',
-                    title: 'Chatflows',
+                    title: 'Chat-Agenten',
                     type: 'item',
                     url: '/chatflows',
                     icon: icons.IconHierarchy,
@@ -98,7 +99,7 @@ const dashboard = {
                 },
                 {
                     id: 'agentflows',
-                    title: 'Agentflows',
+                    title: 'Multi-Agenten',
                     type: 'item',
                     url: '/agentflows',
                     icon: icons.IconUsersGroup,
@@ -106,14 +107,31 @@ const dashboard = {
                     permission: 'agentflows:view'
                 },
                 {
-                    id: 'executions',
-                    title: 'Executions',
+                    id: 'assistants',
+                    title: 'Assistenten',
                     type: 'item',
-                    url: '/executions',
-                    icon: icons.IconListCheck,
+                    url: '/assistants',
+                    icon: icons.IconRobot,
                     breadcrumbs: true,
-                    permission: 'executions:view'
+                    permission: 'assistants:view'
                 },
+                {
+                    id: 'marketplaces',
+                    title: 'Vorlagen',
+                    type: 'item',
+                    url: '/marketplaces',
+                    icon: icons.IconBuildingStore,
+                    breadcrumbs: true,
+                    permission: 'templates:marketplace,templates:custom'
+                }
+            ]
+        },
+        // ==============================|| VOICE ||============================== //
+        {
+            id: 'voice',
+            title: 'Voice',
+            type: 'group',
+            children: [
                 {
                     id: 'transcriptions',
                     title: 'Anrufe & Transkripte',
@@ -123,26 +141,25 @@ const dashboard = {
                     breadcrumbs: true
                 },
                 {
-                    id: 'assistants',
-                    title: 'Assistants',
+                    id: 'executions',
+                    title: 'Ausführungen',
                     type: 'item',
-                    url: '/assistants',
-                    icon: icons.IconRobot,
+                    url: '/executions',
+                    icon: icons.IconListCheck,
                     breadcrumbs: true,
-                    permission: 'assistants:view'
-                },
-                {
-                    id: 'marketplaces',
-                    title: 'Marketplaces',
-                    type: 'item',
-                    url: '/marketplaces',
-                    icon: icons.IconBuildingStore,
-                    breadcrumbs: true,
-                    permission: 'templates:marketplace,templates:custom'
-                },
+                    permission: 'executions:view'
+                }
+            ]
+        },
+        // ==============================|| RESSOURCEN ||============================== //
+        {
+            id: 'resources',
+            title: 'Ressourcen',
+            type: 'group',
+            children: [
                 {
                     id: 'tools',
-                    title: 'Tools',
+                    title: 'Werkzeuge',
                     type: 'item',
                     url: '/tools',
                     icon: icons.IconTool,
@@ -151,7 +168,7 @@ const dashboard = {
                 },
                 {
                     id: 'credentials',
-                    title: 'Credentials',
+                    title: 'Zugangsdaten',
                     type: 'item',
                     url: '/credentials',
                     icon: icons.IconLock,
@@ -160,7 +177,7 @@ const dashboard = {
                 },
                 {
                     id: 'variables',
-                    title: 'Variables',
+                    title: 'Variablen',
                     type: 'item',
                     url: '/variables',
                     icon: icons.IconVariable,
@@ -169,7 +186,7 @@ const dashboard = {
                 },
                 {
                     id: 'apikey',
-                    title: 'API Keys',
+                    title: 'API-Schlüssel',
                     type: 'item',
                     url: '/apikey',
                     icon: icons.IconKey,
@@ -178,7 +195,7 @@ const dashboard = {
                 },
                 {
                     id: 'document-stores',
-                    title: 'Document Stores',
+                    title: 'Dokumentenspeicher',
                     type: 'item',
                     url: '/document-stores',
                     icon: icons.IconFiles,
@@ -187,14 +204,15 @@ const dashboard = {
                 }
             ]
         },
+        // ==============================|| QUALITÄTSSICHERUNG ||============================== //
         {
             id: 'evaluations',
-            title: 'Evaluations',
+            title: 'Qualitätssicherung',
             type: 'group',
             children: [
                 {
                     id: 'datasets',
-                    title: 'Datasets',
+                    title: 'Datensätze',
                     type: 'item',
                     url: '/datasets',
                     icon: icons.IconDatabase,
@@ -204,7 +222,7 @@ const dashboard = {
                 },
                 {
                     id: 'evaluators',
-                    title: 'Evaluators',
+                    title: 'Evaluatoren',
                     type: 'item',
                     url: '/evaluators',
                     icon: icons.IconTestPipe,
@@ -214,7 +232,7 @@ const dashboard = {
                 },
                 {
                     id: 'evaluations',
-                    title: 'Evaluations',
+                    title: 'Auswertungen',
                     type: 'item',
                     url: '/evaluations',
                     icon: icons.IconChartHistogram,
@@ -224,113 +242,98 @@ const dashboard = {
                 }
             ]
         },
+        // ==============================|| ADMINISTRATION ||============================== //
         {
             id: 'management',
-            title: 'User & Workspace Management',
+            title: 'Administration',
             type: 'group',
             children: [
                 {
-                    id: 'sso',
-                    title: 'SSO Config',
-                    type: 'item',
-                    url: '/sso-config',
-                    icon: icons.IconShieldLock,
-                    breadcrumbs: true,
-                    // display removed - only permission check
-                    permission: 'sso:manage'
-                },
-                {
-                    id: 'roles',
-                    title: 'Roles',
-                    type: 'item',
-                    url: '/roles',
-                    icon: icons.IconLockCheck,
-                    breadcrumbs: true,
-                    // display removed - only permission check
-                    permission: 'roles:manage'
-                },
-                {
-                    id: 'users',
-                    title: 'Users',
-                    type: 'item',
-                    url: '/users',
-                    icon: icons.IconUsers,
-                    breadcrumbs: true,
-                    // display removed - only permission check
-                    permission: 'users:manage'
-                },
-                {
-                    id: 'workspaces',
-                    title: 'Workspaces',
-                    type: 'item',
-                    url: '/workspaces',
-                    icon: icons.IconStack2,
-                    breadcrumbs: true,
-                    // display removed - only permission check
-                    permission: 'workspace:view'
-                },
-                {
-                    id: 'login-activity',
-                    title: 'Login Activity',
-                    type: 'item',
-                    url: '/login-activity',
-                    icon: icons.IconClipboardList,
-                    breadcrumbs: true,
-                    // display removed - only permission check
-                    permission: 'loginActivity:view'
-                },
-                {
                     id: 'admin-dashboard',
-                    title: 'Admin Dashboard',
+                    title: 'Admin-Übersicht',
                     type: 'item',
                     url: '/admin',
                     icon: icons.IconDashboard,
                     breadcrumbs: true,
-                    // display removed - only permission check
                     permission: 'users:manage'
-                }
-            ]
-        },
-        {
-            id: 'others',
-            title: 'Others',
-            type: 'group',
-            children: [
+                },
+                {
+                    id: 'users',
+                    title: 'Benutzer',
+                    type: 'item',
+                    url: '/users',
+                    icon: icons.IconUsers,
+                    breadcrumbs: true,
+                    permission: 'users:manage'
+                },
+                {
+                    id: 'roles',
+                    title: 'Rollen',
+                    type: 'item',
+                    url: '/roles',
+                    icon: icons.IconLockCheck,
+                    breadcrumbs: true,
+                    permission: 'roles:manage'
+                },
+                {
+                    id: 'workspaces',
+                    title: 'Arbeitsbereiche',
+                    type: 'item',
+                    url: '/workspaces',
+                    icon: icons.IconStack2,
+                    breadcrumbs: true,
+                    permission: 'workspace:view'
+                },
+                {
+                    id: 'sso',
+                    title: 'SSO-Konfiguration',
+                    type: 'item',
+                    url: '/sso-config',
+                    icon: icons.IconShieldLock,
+                    breadcrumbs: true,
+                    permission: 'sso:manage'
+                },
+                {
+                    id: 'login-activity',
+                    title: 'Anmeldeaktivität',
+                    type: 'item',
+                    url: '/login-activity',
+                    icon: icons.IconClipboardList,
+                    breadcrumbs: true,
+                    permission: 'loginActivity:view'
+                },
                 {
                     id: 'logs',
-                    title: 'Logs',
+                    title: 'System-Logs',
                     type: 'item',
                     url: '/logs',
                     icon: icons.IconList,
                     breadcrumbs: true,
-                    // display removed - only permission check
                     permission: 'logs:view'
-                },
+                }
+            ]
+        },
+        // ==============================|| EINSTELLUNGEN ||============================== //
+        {
+            id: 'settings',
+            title: 'Einstellungen',
+            type: 'group',
+            children: [
                 {
                     id: 'wallet',
-                    title: 'Wallet & Billing',
+                    title: 'Guthaben & Abrechnung',
                     type: 'item',
                     url: '/wallet',
                     icon: icons.IconWallet,
                     breadcrumbs: true
                 },
-                // {
-                //     id: 'files',
-                //     title: 'Files',
-                //     type: 'item',
-                //     url: '/files',
-                //     icon: icons.IconFileDatabase,
-                //     breadcrumbs: true,
-                //     display: 'feat:files',
-                // },
                 {
                     id: 'account',
-                    title: 'Account Settings',
+                    title: 'Konto-Einstellungen',
                     type: 'item',
                     url: '/account',
                     icon: icons.IconSettings,
                     breadcrumbs: true
-                    // display removed - visible to all
                 }
             ]
         }
