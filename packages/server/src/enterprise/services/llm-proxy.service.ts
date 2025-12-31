@@ -62,13 +62,13 @@ export interface LLMProxyConfig {
 export const TOKEN_PRICING = {
     // Kimi K2 (Moonshot) - Hauptmodell für M.A.T.E.
     'moonshotai/kimi-k2': {
-        input: 0.50,    // €0.50 pro 1M Input-Tokens
-        output: 1.50    // €1.50 pro 1M Output-Tokens
+        input: 0.60,    // €0.60 pro 1M Input-Tokens
+        output: 2.50    // €2.50 pro 1M Output-Tokens
     },
     // Kimi K2 mit Extended Thinking (Deep Reasoning)
     'moonshotai/kimi-k2-instruct': {
-        input: 0.50,
-        output: 1.50
+        input: 0.60,
+        output: 2.50
     },
     // OpenAI Modelle
     'openai/gpt-4o': {
@@ -124,8 +124,8 @@ export const TOKEN_PRICING = {
     },
     // Qwen (Alibaba) - Fallback-Modell für M.A.T.E.
     'qwen/qwen3-max': {
-        input: 0.40,    // €0.40 pro 1M Input-Tokens
-        output: 0.80    // €0.80 pro 1M Output-Tokens
+        input: 1.10,    // ~$1.20 = €1.10 pro 1M Input-Tokens
+        output: 5.50    // ~$6.00 = €5.50 pro 1M Output-Tokens
     },
     'qwen/qwen3-235b-a22b': {
         input: 0.20,
@@ -135,10 +135,10 @@ export const TOKEN_PRICING = {
         input: 0.05,
         output: 0.10
     },
-    // Default Fallback (basierend auf Qwen3-Max Pricing)
+    // Default Fallback (basierend auf Kimi K2 Pricing)
     'default': {
-        input: 0.40,
-        output: 0.80
+        input: 0.60,
+        output: 2.50
     }
 } as const
 
