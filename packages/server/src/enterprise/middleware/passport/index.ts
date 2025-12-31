@@ -50,7 +50,7 @@ const jwtOptions = {
     issuer: jwtIssuer
 }
 
-const _initializePassportMiddleware = async (app: express.Application) => {
+const _initializePassportMiddleware = async (app: express.Application): Promise<any> => {
     // Configure session middleware
     let options: any = {
         secret: process.env.EXPRESS_SESSION_SECRET || 'flowise',
@@ -82,10 +82,9 @@ const _initializePassportMiddleware = async (app: express.Application) => {
     app.use(passport.initialize())
     app.use(passport.session())
 
-    if (options.store) {
-        const appServer = getRunningExpressApp()
-        appServer.sessionStore = options.store
-    }
+    // Return the session store to be set on the App instance later
+    // This avoids calling getRunningExpressApp() during initialization
+    // when the app may not be fully ready yet
 
     passport.serializeUser((user: any, done) => {
         done(null, user)
@@ -94,10 +93,12 @@ const _initializePassportMiddleware = async (app: express.Application) => {
     passport.deserializeUser((user: any, done) => {
         done(null, user)
     })
+    
+    return options.store
 }
 
-export const initializeJwtCookieMiddleware = async (app: express.Application, identityManager: IdentityManager) => {
-    await _initializePassportMiddleware(app)
+export const initializeJwtCookieMiddleware = async (app: express.Application, identityManager: IdentityManager): Promise<any> => {
+    const sessionStore = await _initializePassportMiddleware(app)
 
     const strategy = getAuthStrategy(jwtOptions)
     passport.use(strategy)
@@ -337,6 +338,8 @@ export const initializeJwtCookieMiddleware = async (app: express.Application, id
             }
         })(req, res, next)
     })
+    
+    return sessionStore
 }
 
 export const setTokenOrCookies = (
