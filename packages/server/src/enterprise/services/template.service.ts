@@ -8,9 +8,9 @@
 
 import { DataSource, Repository } from 'typeorm'
 import { WorkflowTemplate, TemplateCategory, TemplateComplexity } from '../database/entities/workflow-template.entity'
-import { getLogger } from '../../utils/logger'
+import logger from '../../utils/logger'
 
-const logger = getLogger('TemplateService')
+// Using default logger instance
 
 export class TemplateService {
     private templateRepository: Repository<WorkflowTemplate>

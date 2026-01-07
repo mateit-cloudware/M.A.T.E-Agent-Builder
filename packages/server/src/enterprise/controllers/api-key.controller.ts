@@ -11,7 +11,7 @@
 
 import { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { getRunningExpressApp } from '../../DataSource'
+import { getRunningExpressApp } from '../../utils/getRunningExpressApp'
 import { InternalFlowiseError } from '../../errors/internalFlowiseError'
 import { UserAPIKey, ApiKeyProvider, ApiKeyStatus } from '../database/entities/user-api-key.entity'
 import { apiKeyValidatorService } from '../services/api-key-validator.service'
@@ -183,7 +183,7 @@ export class APIKeyController {
             })
 
             // Sensible Daten entfernen
-            const sanitizedKeys = keys.map(key => ({
+            const sanitizedKeys = keys.map((key: UserAPIKey) => ({
                 id: key.id,
                 provider: key.provider,
                 name: key.name,
