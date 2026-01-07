@@ -180,6 +180,19 @@ const dashboard = {
                     permission: 'credentials:view'
                 },
                 {
+                    id: 'byok-keys',
+                    title: 'BYOK API-Keys',
+                    type: 'item',
+                    url: '/api-keys',
+                    icon: icons.IconShieldLock,
+                    breadcrumbs: true,
+                    chip: {
+                        label: 'NEU',
+                        color: 'success',
+                        size: 'small'
+                    }
+                },
+                {
                     id: 'variables',
                     title: 'Variablen',
                     type: 'item',

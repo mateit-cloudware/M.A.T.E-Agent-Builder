@@ -31,6 +31,9 @@ const CustomAssistantConfigurePreview = Loadable(lazy(() => import('@/views/assi
 // credentials routing
 const Credentials = Loadable(lazy(() => import('@/views/credentials')))
 
+// BYOK API Keys routing
+const BYOKAPIKeys = Loadable(lazy(() => import('@/views/apikeys')))
+
 // variables routing
 const Variables = Loadable(lazy(() => import('@/views/variables')))
 
@@ -192,6 +195,14 @@ const MainRoutes = {
             element: (
                 <RequireAuth permission={'credentials:view'}>
                     <Credentials />
+                </RequireAuth>
+            )
+        },
+        {
+            path: '/api-keys',
+            element: (
+                <RequireAuth>
+                    <BYOKAPIKeys />
                 </RequireAuth>
             )
         },

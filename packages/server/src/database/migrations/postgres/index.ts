@@ -54,6 +54,7 @@ import { RefactorEnterpriseDatabase1737076223692 } from '../../../enterprise/dat
 import { ExecutionLinkWorkspaceId1746862866554 } from '../../../enterprise/database/migrations/postgres/1746862866554-ExecutionLinkWorkspaceId'
 import { AddWalletTables1735588800000 } from '../../../enterprise/database/migrations/postgres/1735588800000-AddWalletTables'
 import { AddTokenUsageTable1735600000000 } from '../../../enterprise/database/migrations/postgres/1735600000000-AddTokenUsageTable'
+import { AddUserAPIKey1748550000000 } from './1748550000000-AddUserAPIKey'
 
 export const postgresMigrations = [
     Init1693891895163,
@@ -110,5 +111,6 @@ export const postgresMigrations = [
     AddTextToSpeechToChatFlow1759419194331,
     AddChatFlowNameIndex1759424903973,
     AddWalletTables1735588800000,
-    AddTokenUsageTable1735600000000
+    AddTokenUsageTable1735600000000,
+    AddUserAPIKey1748550000000
 ]

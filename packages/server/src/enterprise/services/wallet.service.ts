@@ -379,6 +379,89 @@ export class WalletService {
         }
     }
 
+    /**
+     * Pre-Flight Balance Check (Phase 2.1)
+     * 
+     * Prüft ob User genug Guthaben für einen LLM-Call hat
+     * CRITICAL: Blockiert Request bei unzureichendem Guthaben (HTTP 402)
+     * 
+     * @param userId - User-ID
+     * @param estimatedCostCents - Geschätzte Kosten in Cents (mit Safety-Margin)
+     * @param usingByok - Nutzt User BYOK? (kostenfrei)
+     * @returns Pre-Flight-Check-Ergebnis mit allowed/blocked Status
+     */
+    public async performPreFlightCheck(
+        userId: string,
+        estimatedCostCents: number,
+        usingByok: boolean = false
+    ): Promise<{
+        allowed: boolean
+        reason?: string
+        userBalanceCents: number
+        estimatedCostCents: number
+        hasSufficientBalance: boolean
+        usingByok: boolean
+    }> {
+        // BYOK ist kostenfrei - immer erlauben
+        if (usingByok) {
+            return {
+                allowed: true,
+                userBalanceCents: 0,
+                estimatedCostCents: 0,
+                hasSufficientBalance: true,
+                usingByok: true
+            }
+        }
+
+        try {
+            // Hole aktuelles Guthaben
+            const { balanceCents } = await this.getWalletBalance(userId)
+
+            // Prüfe ob Guthaben ausreicht
+            const hasSufficientBalance = balanceCents >= estimatedCostCents
+
+            if (!hasSufficientBalance) {
+                const shortfallCents = estimatedCostCents - balanceCents
+                const shortfallEur = shortfallCents / 100
+
+                logger.warn(`[WalletService] Pre-Flight blocked for user ${userId}: ` +
+                           `Required €${(estimatedCostCents / 100).toFixed(2)}, ` +
+                           `Available €${(balanceCents / 100).toFixed(2)}`)
+
+                return {
+                    allowed: false,
+                    reason: `Insufficient balance. Required: €${(estimatedCostCents / 100).toFixed(2)}, ` +
+                           `Available: €${(balanceCents / 100).toFixed(2)}, ` +
+                           `Please top up at least €${shortfallEur.toFixed(2)}`,
+                    userBalanceCents: balanceCents,
+                    estimatedCostCents,
+                    hasSufficientBalance: false,
+                    usingByok: false
+                }
+            }
+
+            // Guthaben reicht - erlauben
+            return {
+                allowed: true,
+                userBalanceCents: balanceCents,
+                estimatedCostCents,
+                hasSufficientBalance: true,
+                usingByok: false
+            }
+        } catch (error) {
+            logger.error('[WalletService] Pre-Flight check error:', error)
+            // Bei Fehler: Blockieren (fail-safe)
+            return {
+                allowed: false,
+                reason: 'Unable to verify balance. Please try again.',
+                userBalanceCents: 0,
+                estimatedCostCents,
+                hasSufficientBalance: false,
+                usingByok: false
+            }
+        }
+    }
+
     // ==================== USAGE CALCULATION ====================
 
     /**
@@ -614,6 +697,38 @@ export class WalletService {
                 totalLLMCost: parseInt(result?.totalLLMCost) || 0,
                 totalCost: (parseInt(result?.totalVoiceCost) || 0) + (parseInt(result?.totalLLMCost) || 0)
             }
+        } finally {
+            await queryRunner.release()
+        }
+    }
+
+    /**
+     * Get monthly token usage for discount tier calculation
+     * Returns total LLM tokens used in current calendar month
+     */
+    public async getMonthlyTokenUsage(userId: string): Promise<number> {
+        const queryRunner = this.dataSource.createQueryRunner()
+        await queryRunner.connect()
+
+        try {
+            const wallet = await this.readWalletByUserId(userId, queryRunner)
+            if (!wallet) {
+                return 0
+            }
+
+            // Get start of current month
+            const now = new Date()
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+
+            const result = await queryRunner.manager.createQueryBuilder(WalletTransaction, 'tx')
+                .select('SUM(tx.tokens_used) as totalTokens')
+                .where('tx.wallet_id = :walletId', { walletId: wallet.id })
+                .andWhere('tx.type = :usageType', { usageType: WalletTransactionType.USAGE })
+                .andWhere('tx.usage_type = :llm', { llm: UsageType.LLM })
+                .andWhere('tx.created_at >= :startOfMonth', { startOfMonth })
+                .getRawOne()
+
+            return parseInt(result?.totalTokens) || 0
         } finally {
             await queryRunner.release()
         }
