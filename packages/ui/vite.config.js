@@ -39,13 +39,69 @@ export default defineConfig(async ({ mode }) => {
         },
         root: resolve(__dirname),
         build: {
-            outDir: './build'
+            outDir: './build',
+            // Bundle-Optimierungen
+            sourcemap: mode === 'development',
+            minify: 'terser',
+            terserOptions: {
+                compress: {
+                    drop_console: mode === 'production',
+                    drop_debugger: mode === 'production'
+                }
+            },
+            // Code-Splitting-Strategien
+            rollupOptions: {
+                output: {
+                    // Manuelle Chunk-Aufteilung für besseres Caching
+                    manualChunks: {
+                        // React-Bibliotheken
+                        'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+                        // Material-UI
+                        'mui': ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
+                        // Redux
+                        'redux': ['redux', 'react-redux', '@reduxjs/toolkit'],
+                        // Große Bibliotheken
+                        'reactflow': ['reactflow'],
+                        'axios': ['axios'],
+                        // CodeMirror Editor (groß)
+                        'codemirror': [
+                            '@codemirror/state',
+                            '@codemirror/view',
+                            '@codemirror/language',
+                            '@codemirror/lang-javascript',
+                            '@codemirror/lang-json',
+                            '@uiw/react-codemirror'
+                        ]
+                    },
+                    // Optimierte Chunk-Namen
+                    chunkFileNames: (chunkInfo) => {
+                        const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').slice(-1)[0] : 'chunk'
+                        return `js/${facadeModuleId}-[hash].js`
+                    },
+                    entryFileNames: 'js/[name]-[hash].js',
+                    assetFileNames: 'assets/[name]-[hash][extname]'
+                }
+            },
+            // Performance-Warnungen
+            chunkSizeWarningLimit: 1000
         },
         server: {
             open: true,
             proxy,
             port: process.env.VITE_PORT ?? 8080,
             host: process.env.VITE_HOST
+        },
+        // Performance-Optimierungen für Dev-Server
+        optimizeDeps: {
+            include: [
+                'react',
+                'react-dom',
+                'react-router-dom',
+                '@mui/material',
+                '@emotion/react',
+                '@emotion/styled',
+                'axios'
+            ]
         }
     }
 })

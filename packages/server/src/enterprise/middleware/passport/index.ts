@@ -24,6 +24,7 @@ import { getAuthStrategy } from './AuthStrategy'
 import { initializeDBClientAndStore, initializeRedisClientAndStore } from './SessionPersistance'
 import { v4 as uuidv4 } from 'uuid'
 import { mateAuthMiddleware, isMateRequest } from '../mateAuth'
+import { isOrganizationAdmin as checkIsOrganizationAdmin } from '../../utils/adminCheck'
 
 const localStrategy = require('passport-local').Strategy
 
@@ -158,50 +159,16 @@ export const initializeJwtCookieMiddleware = async (app: express.Application, id
                     const role = await roleService.readRoleById(workspaceUser.roleId, queryRunner)
                     if (!role) throw new InternalFlowiseError(StatusCodes.NOT_FOUND, RoleErrorMessage.ROLE_NOT_FOUND)
 
-                    // M.A.T.E.: Check if user is organization admin
-                    // Multiple fallback checks for robustness:
-                    // 1. User's roleId matches the owner role ID
-                    // 2. User's role name is 'owner' (case-insensitive)
-                    // 3. User has owner role in any assigned workspace
-                    // 4. User is the first/only user in the organization (bootstrap admin)
-                    
-                    // Check 1-3: Standard role checks
-                    let isOrgAdmin = (
-                        (ownerRole && workspaceUser.roleId === ownerRole.id) ||
-                        (role.name && role.name.toLowerCase() === 'owner') ||
-                        assignedWorkspaces.some(ws => ws.role && ws.role.toLowerCase() === 'owner')
-                    )
-                    
-                    // Check 4: First user in organization bootstrap
-                    // If user is not yet admin by role, check if they're the only/first user
-                    if (!isOrgAdmin) {
-                        const allOrgUsers = await queryRunner.manager
-                            .createQueryBuilder('OrganizationUser', 'ou')
-                            .where('ou.organizationId = :orgId', { orgId: organizationUser.organizationId })
-                            .getMany()
-                        
-                        // If this is the only user or the first user (by ID comparison)
-                        if (allOrgUsers.length === 1) {
-                            isOrgAdmin = true
-                            console.log(`[M.A.T.E. Admin] User ${response.user.email} is the only user in organization - granting admin rights`)
-                        } else if (allOrgUsers.length > 0) {
-                            // Check if this user was the first to be created (smallest createdDate)
-                            const sortedUsers = allOrgUsers.sort((a: any, b: any) => 
-                                new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
-                            )
-                            if (sortedUsers[0] && sortedUsers[0].userId === workspaceUser.userId) {
-                                isOrgAdmin = true
-                                console.log(`[M.A.T.E. Admin] User ${response.user.email} is the first user in organization - granting admin rights`)
-                            }
-                        }
-                    }
-                    
-                    // Debug logging
-                    console.log(`[M.A.T.E. Admin Debug] User: ${response.user.email}`)
-                    console.log(`[M.A.T.E. Admin Debug] Role: ${role.name}, RoleId: ${workspaceUser.roleId}`)
-                    console.log(`[M.A.T.E. Admin Debug] OwnerRole ID: ${ownerRole?.id}`)
-                    console.log(`[M.A.T.E. Admin Debug] Assigned Workspaces: ${JSON.stringify(assignedWorkspaces.map(ws => ({ id: ws.id, role: ws.role })))}`)
-                    console.log(`[M.A.T.E. Admin Debug] isOrgAdmin: ${isOrgAdmin}`)
+                    // M.A.T.E.: Centralized Admin Check using utility function
+                    const isOrgAdmin = await checkIsOrganizationAdmin({
+                        userId: workspaceUser.userId,
+                        roleId: workspaceUser.roleId,
+                        roleName: role.name,
+                        organizationId: organizationUser.organizationId,
+                        assignedWorkspaces,
+                        ownerRole,
+                        queryRunner
+                    })
 
                     const orgService = new OrganizationService()
                     const organization = await orgService.readOrganizationById(organizationUser.organizationId, queryRunner)

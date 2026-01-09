@@ -17,7 +17,7 @@ class GoogleDriveOAuth2 implements INodeCredential {
         this.name = 'googleDriveOAuth2'
         this.version = 1.0
         this.description =
-            'You can find the setup instructions <a target="_blank" href="https://docs.flowiseai.com/integrations/langchain/tools/google-drive">here</a>'
+            'Refer to <a target="_blank" href="https://developers.google.com/drive/api/guides/about-sdk">Google Drive API documentation</a> for setup instructions'
         this.inputs = [
             {
                 label: 'Authorization URL',

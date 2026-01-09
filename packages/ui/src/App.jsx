@@ -11,6 +11,7 @@ import themes from '@/themes'
 
 // project imports
 import NavigationScroll from '@/layout/NavigationScroll'
+import { ErrorBoundary } from '@/ui-component/error'
 
 // tour system
 import { TourProvider, TourOverlay, tourSteps } from '@/ui-component/tour'
@@ -21,17 +22,19 @@ const App = () => {
     const customization = useSelector((state) => state.customization)
 
     return (
-        <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={themes(customization)}>
-                <CssBaseline />
-                <TourProvider steps={tourSteps}>
-                    <NavigationScroll>
-                        <Routes />
-                    </NavigationScroll>
-                    <TourOverlay />
-                </TourProvider>
-            </ThemeProvider>
-        </StyledEngineProvider>
+        <ErrorBoundary level="root">
+            <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={themes(customization)}>
+                    <CssBaseline />
+                    <TourProvider steps={tourSteps}>
+                        <NavigationScroll>
+                            <Routes />
+                        </NavigationScroll>
+                        <TourOverlay />
+                    </TourProvider>
+                </ThemeProvider>
+            </StyledEngineProvider>
+        </ErrorBoundary>
     )
 }
 

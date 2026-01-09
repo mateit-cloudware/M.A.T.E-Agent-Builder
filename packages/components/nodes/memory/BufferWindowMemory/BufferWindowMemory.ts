@@ -46,7 +46,7 @@ class BufferWindowMemory_Memory implements INode {
                 name: 'sessionId',
                 type: 'string',
                 description:
-                    'If not specified, a random id will be used. Learn <a target="_blank" href="https://docs.flowiseai.com/memory#ui-and-embedded-chat">more</a>',
+                    'If not specified, a random id will be used. Session IDs help maintain conversation context across multiple interactions.',
                 default: '',
                 optional: true,
                 additionalParams: true

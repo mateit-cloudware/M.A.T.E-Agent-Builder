@@ -148,7 +148,7 @@ class ChatOpenAI_ChatModels implements INode {
                 name: 'allowImageUploads',
                 type: 'boolean',
                 description:
-                    'Allow image input. Refer to the <a href="https://docs.flowiseai.com/using-flowise/uploads#image" target="_blank">docs</a> for more details.',
+                    'Allow image input for multimodal models. Automatically enabled for vision-capable models.',
                 default: false,
                 optional: true
             },

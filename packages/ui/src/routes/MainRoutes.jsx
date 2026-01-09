@@ -3,6 +3,7 @@ import { lazy } from 'react'
 // project imports
 import MainLayout from '@/layout/MainLayout'
 import Loadable from '@/ui-component/loading/Loadable'
+import { RouteErrorBoundary } from '@/ui-component/error'
 
 import { RequireAuth } from '@/routes/RequireAuth'
 import { DefaultRedirect } from '@/routes/DefaultRedirect'

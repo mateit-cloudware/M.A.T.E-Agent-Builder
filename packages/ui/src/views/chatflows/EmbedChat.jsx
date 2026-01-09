@@ -38,6 +38,8 @@ function a11yProps(index) {
     }
 }
 
+// Note: flowise-embed package name is maintained for technical compatibility
+// Future consideration: Create M.A.T.E.-specific embed packages
 const embedPopupHtmlCode = (chatflowid) => {
     return `<script type="module">
     import Chatbot from "https://cdn.jsdelivr.net/npm/flowise-embed/dist/web.js"
@@ -102,14 +104,14 @@ export const defaultThemeConfig = {
     },
     tooltip: {
         showTooltip: true,
-        tooltipMessage: 'Hi There 👋!',
+        tooltipMessage: 'Willkommen bei M.A.T.E.! 👋',
         tooltipBackgroundColor: 'black',
         tooltipTextColor: 'white',
         tooltipFontSize: 16
     },
     disclaimer: {
         title: 'Disclaimer',
-        message: 'By using this chatbot, you agree to the <a target="_blank" href="https://flowiseai.com/terms">Terms & Condition</a>',
+        message: 'By using this chatbot, you agree to the <a target="_blank" href="https://getmate.ai/terms">Terms & Condition</a>',
         textColor: 'black',
         buttonColor: '#3b82f6',
         buttonText: 'Start Chatting',
@@ -123,7 +125,7 @@ export const defaultThemeConfig = {
         showAgentMessages: true,
         title: 'M.A.T.E. Voice Agent',
         titleAvatarSrc: 'https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/svg/google-messages.svg',
-        welcomeMessage: 'Hello! This is custom welcome message',
+        welcomeMessage: 'Willkommen! Wie kann ich Ihnen helfen?',
         errorMessage: 'This is a custom error message',
         backgroundColor: '#ffffff',
         backgroundImage: 'enter image path or link',

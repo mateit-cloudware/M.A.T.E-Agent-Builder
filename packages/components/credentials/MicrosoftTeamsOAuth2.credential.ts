@@ -49,7 +49,7 @@ class MsoftTeamsOAuth2 implements INodeCredential {
         this.name = 'microsoftTeamsOAuth2'
         this.version = 1.0
         this.description =
-            'You can find the setup instructions <a target="_blank" href="https://docs.flowiseai.com/integrations/langchain/tools/microsoft-teams">here</a>'
+            'Refer to <a target="_blank" href="https://learn.microsoft.com/en-us/graph/teams-concept-overview">Microsoft Graph Teams API documentation</a> for setup instructions'
         this.inputs = [
             {
                 label: 'Authorization URL',

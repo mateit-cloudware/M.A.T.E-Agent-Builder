@@ -24,7 +24,10 @@ import {
     Typography,
     Chip,
     Tab,
-    Tabs
+    Tabs,
+    ToggleButton,
+    ToggleButtonGroup,
+    Tooltip
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
@@ -37,8 +40,11 @@ import Transitions from '@/ui-component/extended/Transitions'
 import { StyledFab } from '@/ui-component/button/StyledFab'
 import AgentflowGeneratorDialog from '@/ui-component/dialog/AgentflowGeneratorDialog'
 
+// User-Facing Categories für vereinfachte Navigation
+import { USER_FACING_CATEGORIES, TECHNICAL_TO_USER_FACING, getUserFacingCategory, groupNodesByUserFacingCategory, getCategoryMetaByTitle } from '@/config/userFacingCategories'
+
 // icons
-import { IconPlus, IconSearch, IconMinus, IconX, IconSparkles } from '@tabler/icons-react'
+import { IconPlus, IconSearch, IconMinus, IconX, IconSparkles, IconCategory, IconList, IconSwitchHorizontal } from '@tabler/icons-react'
 import LlamaindexPNG from '@/assets/images/llamaindex.png'
 import LangChainPNG from '@/assets/images/langchain.png'
 import utilNodesPNG from '@/assets/images/utilNodes.png'
@@ -47,7 +53,7 @@ import utilNodesPNG from '@/assets/images/utilNodes.png'
 import { baseURL, AGENTFLOW_ICONS } from '@/store/constant'
 import { SET_COMPONENT_NODES } from '@/store/actions'
 
-// ==============================|| ADD NODES||============================== //
+// ==============================|| ADD NODES||============================== //0PX72
 function a11yProps(index) {
     return {
         id: `attachment-tab-${index}`,
@@ -80,6 +86,10 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
     const [open, setOpen] = useState(false)
     const [categoryExpanded, setCategoryExpanded] = useState({})
     const [tabValue, setTabValue] = useState(0)
+    
+    // Neuer State für vereinfachte Kategorisierung (Default: vereinfacht)
+    // 'simplified' = Benutzerfreundliche Kategorien, 'technical' = Technische Kategorien
+    const [categoryMode, setCategoryMode] = useState('simplified')
 
     const [openDialog, setOpenDialog] = useState(false)
     const [dialogProps, setDialogProps] = useState({})
@@ -259,7 +269,83 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
         }
     }
 
+    // Gruppiert Nodes nach benutzerfreundlichen Kategorien (vereinfachter Modus)
+    const groupByUserFacingCategory = (nodes, isFilter) => {
+        // Filtere zuerst unerwünschte Kategorien aus
+        let filteredNodes = nodes.filter((nd) => {
+            // Für AgentCanvas: Blacklisted Kategorien ausschließen
+            if (isAgentCanvas) {
+                if (blacklistCategoriesForAgentCanvas.includes(nd.category)) {
+                    // Prüfe auf Ausnahmen
+                    const exceptions = exceptionsForAgentCanvas[nd.category]
+                    if (exceptions && exceptions.includes(nd.name)) {
+                        return true
+                    }
+                    return false
+                }
+                // LlamaIndex-Nodes für Agent Canvas filtern
+                if (nd.tags && nd.tags.includes('LlamaIndex')) {
+                    return false
+                }
+            } else {
+                // Für Chatflow Canvas
+                if (nd.category === 'Agent Flows' || nd.category === 'Multi Agents' || nd.category === 'Sequential Agents') {
+                    return false
+                }
+                // Blacklist für Chatflow
+                const nodeBlacklist = blacklistForChatflowCanvas[nd.category]
+                if (nodeBlacklist && nodeBlacklist.includes(nd.name)) {
+                    return false
+                }
+            }
+            return true
+        })
+
+        // Gruppiere nach benutzerfreundlichen Kategorien
+        const groupedByUserFacing = {}
+        const accordianCategories = {}
+
+        filteredNodes.forEach((node) => {
+            const userFacingKey = TECHNICAL_TO_USER_FACING[node.category] || 'advanced'
+            const userFacingCat = USER_FACING_CATEGORIES[userFacingKey]
+            
+            if (userFacingCat) {
+                const categoryTitle = userFacingCat.title
+                if (!groupedByUserFacing[categoryTitle]) {
+                    groupedByUserFacing[categoryTitle] = {
+                        nodes: [],
+                        icon: userFacingCat.icon,
+                        color: userFacingCat.color,
+                        description: userFacingCat.description,
+                        order: userFacingCat.order
+                    }
+                }
+                groupedByUserFacing[categoryTitle].nodes.push(node)
+                accordianCategories[categoryTitle] = isFilter ? true : false
+            }
+        })
+
+        // Konvertiere zu dem erwarteten Format {categoryName: [nodes]}
+        const result = {}
+        Object.keys(groupedByUserFacing)
+            .sort((a, b) => groupedByUserFacing[a].order - groupedByUserFacing[b].order)
+            .forEach((cat) => {
+                if (groupedByUserFacing[cat].nodes.length > 0) {
+                    result[cat] = groupedByUserFacing[cat].nodes
+                }
+            })
+
+        setNodes(result)
+        setCategoryExpanded(accordianCategories)
+    }
+
     const groupByCategory = (nodes, newTabValue, isFilter) => {
+        // Im vereinfachten Modus: Benutzerfreundliche Kategorien verwenden
+        if (categoryMode === 'simplified' && !isAgentCanvas) {
+            groupByUserFacingCategory(nodes, isFilter)
+            return
+        }
+        
         if (isAgentCanvas) {
             const accordianCategories = {}
             const result = nodes.reduce(function (r, a) {
@@ -515,6 +601,36 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                             }}
                                         />
                                         {!isAgentCanvas && (
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                                {/* Toggle zwischen vereinfacht und technisch */}
+                                                <Tooltip title={categoryMode === 'simplified' ? 'Technische Ansicht' : 'Vereinfachte Ansicht'}>
+                                                    <ToggleButtonGroup
+                                                        value={categoryMode}
+                                                        exclusive
+                                                        onChange={(e, newMode) => {
+                                                            if (newMode) {
+                                                                setCategoryMode(newMode)
+                                                                // Neu gruppieren bei Moduswechsel
+                                                                setTimeout(() => groupByCategory(nodesData, tabValue), 0)
+                                                            }
+                                                        }}
+                                                        size='small'
+                                                        sx={{ height: 32 }}
+                                                    >
+                                                        <ToggleButton value='simplified' sx={{ px: 1.5 }}>
+                                                            <IconCategory size={18} />
+                                                            <Typography variant='caption' sx={{ ml: 0.5 }}>Einfach</Typography>
+                                                        </ToggleButton>
+                                                        <ToggleButton value='technical' sx={{ px: 1.5 }}>
+                                                            <IconList size={18} />
+                                                            <Typography variant='caption' sx={{ ml: 0.5 }}>Technisch</Typography>
+                                                        </ToggleButton>
+                                                    </ToggleButtonGroup>
+                                                </Tooltip>
+                                            </Box>
+                                        )}
+                                        {/* Framework-Tabs nur im technischen Modus anzeigen */}
+                                        {!isAgentCanvas && categoryMode === 'technical' && (
                                             <Tabs
                                                 sx={{ position: 'relative', minHeight: '50px', height: '50px' }}
                                                 variant='fullWidth'
@@ -586,52 +702,110 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                 }}
                                             >
                                                 {Object.keys(nodes)
-                                                    .sort()
-                                                    .map((category) => (
-                                                        <Accordion
-                                                            expanded={categoryExpanded[category] || false}
-                                                            onChange={handleAccordionChange(category)}
-                                                            key={category}
-                                                            disableGutters
-                                                        >
-                                                            <AccordionSummary
-                                                                expandIcon={<ExpandMoreIcon />}
-                                                                aria-controls={`nodes-accordian-${category}`}
-                                                                id={`nodes-accordian-header-${category}`}
+                                                    .sort((a, b) => {
+                                                        // Im vereinfachten Modus nach Kategorie-Order sortieren
+                                                        if (categoryMode === 'simplified') {
+                                                            const metaA = getCategoryMetaByTitle(a)
+                                                            const metaB = getCategoryMetaByTitle(b)
+                                                            if (metaA && metaB) {
+                                                                return metaA.order - metaB.order
+                                                            }
+                                                        }
+                                                        // Standard: Alphabetisch
+                                                        return a.localeCompare(b)
+                                                    })
+                                                    .map((category) => {
+                                                        // Hole Kategorie-Metadaten für vereinfachte Ansicht
+                                                        const categoryMeta = categoryMode === 'simplified' ? getCategoryMetaByTitle(category) : null
+                                                        const CategoryIcon = categoryMeta?.icon
+                                                        
+                                                        return (
+                                                            <Accordion
+                                                                expanded={categoryExpanded[category] || false}
+                                                                onChange={handleAccordionChange(category)}
+                                                                key={category}
+                                                                disableGutters
+                                                                sx={{
+                                                                    // Farbiger Akzent für vereinfachte Kategorien
+                                                                    ...(categoryMeta && {
+                                                                        borderLeft: `3px solid ${categoryMeta.color}`,
+                                                                        '&:before': { display: 'none' }
+                                                                    })
+                                                                }}
                                                             >
-                                                                {category.split(';').length > 1 ? (
-                                                                    <div
-                                                                        style={{
-                                                                            display: 'flex',
-                                                                            flexDirection: 'row',
-                                                                            alignItems: 'center'
-                                                                        }}
-                                                                    >
-                                                                        <Typography variant='h5'>{category.split(';')[0]}</Typography>
-                                                                        &nbsp;
-                                                                        <Chip
-                                                                            sx={{
-                                                                                width: 'max-content',
-                                                                                fontWeight: 700,
-                                                                                fontSize: '0.65rem',
-                                                                                background:
-                                                                                    category.split(';')[1] === 'DEPRECATING'
-                                                                                        ? theme.palette.warning.main
-                                                                                        : theme.palette.teal.main,
-                                                                                color:
-                                                                                    category.split(';')[1] !== 'DEPRECATING'
-                                                                                        ? 'white'
-                                                                                        : 'inherit'
+                                                                <AccordionSummary
+                                                                    expandIcon={<ExpandMoreIcon />}
+                                                                    aria-controls={`nodes-accordian-${category}`}
+                                                                    id={`nodes-accordian-header-${category}`}
+                                                                >
+                                                                    {category.split(';').length > 1 ? (
+                                                                        <div
+                                                                            style={{
+                                                                                display: 'flex',
+                                                                                flexDirection: 'row',
+                                                                                alignItems: 'center'
                                                                             }}
-                                                                            size='small'
-                                                                            label={category.split(';')[1]}
-                                                                        />
-                                                                    </div>
-                                                                ) : (
-                                                                    <Typography variant='h5'>{category}</Typography>
-                                                                )}
-                                                            </AccordionSummary>
-                                                            <AccordionDetails>
+                                                                        >
+                                                                            <Typography variant='h5'>{category.split(';')[0]}</Typography>
+                                                                            &nbsp;
+                                                                            <Chip
+                                                                                sx={{
+                                                                                    width: 'max-content',
+                                                                                    fontWeight: 700,
+                                                                                    fontSize: '0.65rem',
+                                                                                    background:
+                                                                                        category.split(';')[1] === 'DEPRECATING'
+                                                                                            ? theme.palette.warning.main
+                                                                                            : theme.palette.teal.main,
+                                                                                    color:
+                                                                                        category.split(';')[1] !== 'DEPRECATING'
+                                                                                            ? 'white'
+                                                                                            : 'inherit'
+                                                                                }}
+                                                                                size='small'
+                                                                                label={category.split(';')[1]}
+                                                                            />
+                                                                        </div>
+                                                                    ) : (
+                                                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                                {/* Icon für vereinfachte Kategorien */}
+                                                                                {CategoryIcon && (
+                                                                                    <CategoryIcon
+                                                                                        size={20}
+                                                                                        style={{ color: categoryMeta.color }}
+                                                                                    />
+                                                                                )}
+                                                                                <Typography variant='h5'>{category}</Typography>
+                                                                                {/* Node-Anzahl Badge */}
+                                                                                <Chip
+                                                                                    size='small'
+                                                                                    label={nodes[category].length}
+                                                                                    sx={{
+                                                                                        ml: 1,
+                                                                                        height: 20,
+                                                                                        fontSize: '0.7rem',
+                                                                                        backgroundColor: categoryMeta?.color ? `${categoryMeta.color}20` : theme.palette.grey[200],
+                                                                                        color: categoryMeta?.color || theme.palette.grey[700]
+                                                                                    }}
+                                                                                />
+                                                                            </Box>
+                                                                            {/* Beschreibung für vereinfachte Kategorien */}
+                                                                            {categoryMeta?.description && (
+                                                                                <Typography
+                                                                                    variant='caption'
+                                                                                    sx={{
+                                                                                        color: theme.palette.grey[500],
+                                                                                        fontSize: '0.7rem'
+                                                                                    }}
+                                                                                >
+                                                                                    {categoryMeta.description}
+                                                                                </Typography>
+                                                                            )}
+                                                                        </Box>
+                                                                    )}
+                                                                </AccordionSummary>
+                                                                <AccordionDetails>
                                                                 {nodes[category].map((node, index) => (
                                                                     <div
                                                                         key={node.name}
@@ -739,7 +913,8 @@ const AddNodes = ({ nodesData, node, isAgentCanvas, isAgentflowv2, onFlowGenerat
                                                                 ))}
                                                             </AccordionDetails>
                                                         </Accordion>
-                                                    ))}
+                                                        )
+                                                    })}
                                             </List>
                                         </Box>
                                     </PerfectScrollbar>
